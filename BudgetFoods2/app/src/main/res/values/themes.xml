@@ -1,0 +1,28 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.BudgetFoods" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    </style>
+
+    <style name="Theme.BudgetFoods" parent="Base.Theme.BudgetFoods" />
+    <style name="Theme.MomoTest" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="colorPrimary">@color/lightblue</item>
+        <item name="colorPrimaryDark">@color/grey</item>
+        <item name="colorAccent">@color/orange</item>
+        <!--    <item name="OTPButtonStyle">@style/myOtpBtnStyle</item>
+            <item name="PayButtonStyle">@style/myBtnStyle</item>
+            <item name="PinButtonStyle">@style/myPinButtonStyle</item>
+            <item name="OTPHeaderStyle">@style/myOtpHeaderStyle</item>
+            <item name="TabLayoutStyle">@style/myTabLayoutStyle</item>
+            <item name="PinHeaderStyle">@style/myPinHeaderStyle</item>
+            <item name="PaymentTileStyle">@style/myPaymentTileStyle</item>
+            <item name="PaymentTileTextStyle">@style/myPaymentTileTextStyle</item>
+            <item name="PaymentTileDividerStyle">@style/myPaymentTileDividerStyle</item>-->
+
+    </style>
+</resources>

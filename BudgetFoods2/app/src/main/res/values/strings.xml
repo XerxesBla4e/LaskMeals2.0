@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Budget foods</string>
+    <string-array name="orders">
+        <item></item>
+        <item>food1</item>
+        <item>food2</item>
+        <item>food3</item>
+        <item>food4</item>
+        <item>food5</item>
+        <item>food6</item>
+        <item>food7</item>
+        <item>food8</item>
+        <item>food9</item>
+        <item>food10</item>
+
+    </string-array>
+
+    <string-array name="description">
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+        <item> "TESTING CONSULTATION </item>
+    </string-array>
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+        <item>Gender</item>
+    </string-array>
+    <string name="title_activity_maps">MapsActivity</string>
+
+</resources>
