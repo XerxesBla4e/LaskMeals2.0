@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#176D9C"
-    tools:context=".Adm"
+    tools:context=".Admin.AddFood"
     android:padding="16dp"
     >
 

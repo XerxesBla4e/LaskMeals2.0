@@ -120,6 +120,10 @@ public class Food {
         this.discountdescription = discountdescription;
     }
 
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
     public String getFoodimage() {
         return foodimage;
     }

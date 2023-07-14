@@ -63,10 +63,9 @@ public class AdminSignup extends AppCompatActivity {
 
     AdminsignupBinding adminsignupBinding;
     private Calendar bodcalendar = Calendar.getInstance();
-    private EditText bodedittext;
+    EditText bodedittext;
     Button pickDOB, pickLocation, submit;
     public static final int PERMISSION_REQUEST_CODE = 444;
-    DatePicker datePicker;
     String date, name, age, email, phonenumber, university, location, password, repass, gender;
     String district, city, state, country, address;
 
