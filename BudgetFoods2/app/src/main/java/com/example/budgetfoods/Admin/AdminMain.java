@@ -1,13 +1,16 @@
 package com.example.budgetfoods.Admin;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -104,12 +107,74 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
                 startActivity(x6);
             }
         });
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                if (direction == ItemTouchHelper.RIGHT) {
+                    showConfirmationDialog(viewHolder);
+                } else {
+                    orderAdapter.notifyDataSetChanged(); // Refresh the adapter to undo the swipe action
+                }
+            }
+        }).attachToRecyclerView(recyclerView);
 
         orderAdapter.setOnMoveToDetsListener(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+    }
+
+    private void showConfirmationDialog(RecyclerView.ViewHolder viewHolder) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(AdminMain.this);
+        builder.setTitle("Confirm Delete")
+                .setMessage("Are you sure you want to delete this order?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteOrderItem(viewHolder);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        orderAdapter.notifyDataSetChanged(); // Refresh the adapter to undo the swipe action
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void deleteOrderItem(RecyclerView.ViewHolder viewHolder) {
+        int position = viewHolder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+            Order order = orderList.get(position);
+
+            DocumentReference medicineRef = firestore.collection("users")
+                    .document(uid1)
+                    .collection("orders")
+                    .document(order.getOrderID());
+
+            medicineRef.delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(AdminMain.this, "Order deleted", Toast.LENGTH_SHORT).show();
+                            orderList.remove(position);
+                            orderAdapter.notifyItemRemoved(position);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(AdminMain.this, "Failed to delete order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 
@@ -233,6 +298,10 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
                     firebaseAuth.signOut();
                     startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                     finish();
+                }else if(item.getItemId()==R.id.nav_viewfood){
+                    Intent x0 = new Intent(getApplicationContext(), ViewMyFoods.class);
+                    x0.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(x0);
                 }
             }
         });

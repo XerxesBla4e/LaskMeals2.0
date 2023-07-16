@@ -124,10 +124,26 @@ public class AddFood extends AppCompatActivity {
                     activityAddFoodBinding.discountPriceEditText.setVisibility(View.GONE);
                     activityAddFoodBinding.discountDescriptionEditText.setVisibility(View.GONE);
                     discount = "0";
-                    discountpercent = "0";
+                    discountpercent = "0%";
                 }
             }
         });
+    }
+
+    private void pickFoodImage() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Food Image"), MEDICINE_ITEM_IMAGE_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == MEDICINE_ITEM_IMAGE_CODE && data != null && data.getData() != null) {
+            uri = data.getData();
+            imageView.setImageURI(uri);
+        }
     }
 
     private void uploadFood() {
@@ -171,50 +187,72 @@ public class AddFood extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressBar.setVisibility(View.GONE);
-                            Toast.makeText(AddFood.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddFood.this, "Upload Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         } else {
-            StorageReference filepath = storageReference.child("imagePost").child(uri.getLastPathSegment());
-            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            StorageReference filepath = storageReference.child("imagePost").child(timestamp);
+            UploadTask uploadTask = filepath.putFile(uri);
+
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("foodname", name);
-                            hashMap.put("description", description);
-                            hashMap.put("restaurant", restaurant);
-                            hashMap.put("price", price);
-                            hashMap.put("fId", timestamp);
-                            hashMap.put("timestamp", timestamp);
-                            hashMap.put("Uid", firebaseAuth.getUid());
-                            hashMap.put("discount", discount);
-                            hashMap.put("discountdescription", discountpercent);
-                            hashMap.put("foodimage", task.getResult().toString());
-
-                            DocumentReference userRef = firestore.collection("users").document(uid);
-                            userRef.collection("Food").document(timestamp).set(hashMap)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            progressBar.setVisibility(View.GONE);
-                                            Toast.makeText(AddFood.this, "Food Item Added...", Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            progressBar.setVisibility(View.GONE);
-                                            Toast.makeText(AddFood.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                        public void onSuccess(Uri downloadUri) {
+                            String imageUrl = downloadUri.toString();
+                            uploadFoodDataWithImage(timestamp, imageUrl);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            handleUploadFailure(e);
                         }
                     });
                 }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    handleUploadFailure(e);
+                }
             });
         }
+    }
+
+    private void uploadFoodDataWithImage(String timestamp, String imageUrl) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("foodname", name);
+        hashMap.put("description", description);
+        hashMap.put("restaurant", restaurant);
+        hashMap.put("price", price);
+        hashMap.put("fId", timestamp);
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("Uid", firebaseAuth.getUid());
+        hashMap.put("discount", discount);
+        hashMap.put("discountdescription", discountpercent);
+        hashMap.put("foodimage", imageUrl);
+
+        DocumentReference userRef = firestore.collection("users").document(uid);
+        userRef.collection("Food").document(timestamp).set(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(AddFood.this, "Food Added...", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(AddFood.this, "Upload Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void handleUploadFailure(Exception e) {
+        progressBar.setVisibility(View.GONE);
+        Toast.makeText(AddFood.this, "Image Upload Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     public boolean validateFields() {
@@ -243,33 +281,26 @@ public class AddFood extends AppCompatActivity {
         if (discavailable) {
             discount = activityAddFoodBinding.discountPriceEditText.getText().toString();
             discountpercent = activityAddFoodBinding.discountDescriptionEditText.getText().toString();
+
             if (TextUtils.isEmpty(discount)) {
                 activityAddFoodBinding.discountPriceEditText.setError("Please insert Discount Amount");
                 return false;
             }
+
             if (TextUtils.isEmpty(discountpercent)) {
                 activityAddFoodBinding.discountDescriptionEditText.setError("Please insert discount description/percentage");
+                return false;
+            }
+
+            // Validate discountpercent to ensure it contains a percentage symbol (%)
+            if (!discountpercent.contains("%")) {
+                activityAddFoodBinding.discountDescriptionEditText.setError("Please insert a discount description with a percentage symbol eg. (20%)");
                 return false;
             }
         }
         return true;
     }
 
-    private void pickFoodImage() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Select Medicine Image"), MEDICINE_ITEM_IMAGE_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK && requestCode == MEDICINE_ITEM_IMAGE_CODE && data != null && data.getData() != null) {
-            uri = data.getData();
-            imageView.setImageURI(uri);
-        }
-    }
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(getApplicationContext(), AdminMain.class);

@@ -99,7 +99,7 @@
     <Switch
         android:id="@+id/discountSwitch"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:text="Apply Discount"
         android:layout_marginTop="16dp" />
 
@@ -123,7 +123,7 @@
         android:id="@+id/discountDescriptionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Discount Description"
+        android:hint="Discount Description eg.(20%)"
         android:visibility="gone">
 
         <com.google.android.material.textfield.TextInputEditText

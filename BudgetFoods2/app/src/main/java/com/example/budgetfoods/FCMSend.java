@@ -18,10 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FCMSend {
-    private static String BASE_URL = "https://fcm.googleapis.com/fcm/send";
-    private static String SERVER_KEY = "key=AAAApwkT1So:APA91bHu7-mdluz2dvUU2UeZgv1R_497RjSkMOGjUlbbbyQloMB1_G8FHeMXHDLp2t9SY2cs9dizfVmBENDZ8M-RhF_agiOdL1Gxk19W6AUccYP679KIp7d5EcKOLORIK3P95VoAEcZs";
-
-
     public static void pushNotification(Context context, String token, String title, String message) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -36,7 +32,7 @@ public class FCMSend {
             json.put("notification", notification);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.POST, BASE_URL, json, new Response.Listener<JSONObject>() {
+                    Request.Method.POST, Constants.BASE_URL, json, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     System.out.println("FCM "+response);
@@ -51,7 +47,7 @@ public class FCMSend {
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String,String> params = new HashMap<>();
                     params.put("Content-Type","application/json");
-                    params.put("Authorization",SERVER_KEY);
+                    params.put("Authorization",Constants.SERVER_KEY);
                     return params;
                 }
             };

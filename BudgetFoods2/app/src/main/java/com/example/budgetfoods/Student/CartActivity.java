@@ -246,18 +246,21 @@ public class CartActivity extends AppCompatActivity {
                                                                                                     .collection("foodOrders");
 
                                                                                             // Create a HashMap to store the details of the medicine
-                                                                                            HashMap<String, Object> medicineDetails = new HashMap<>();
-                                                                                            medicineDetails.put("fId", food.getFId());
-                                                                                            medicineDetails.put("fName", food.getFoodname());
-                                                                                            medicineDetails.put("fDescription", food.getDescription());
-                                                                                            medicineDetails.put("fPrice", food.getPrice());
-                                                                                            medicineDetails.put("fDiscount", food.getDiscount());
-                                                                                            medicineDetails.put("fDiscountDesc", food.getDiscountdescription());
-                                                                                            medicineDetails.put("fTimestamp", food.getTimestamp());
-                                                                                            medicineDetails.put("fUid", food.getUid());
-                                                                                            medicineDetails.put("fImage", food.getFoodimage());
+                                                                                            HashMap<String, Object> foodDetails = new HashMap<>();
+                                                                                            foodDetails.put("fId", food.getFId());
+                                                                                            foodDetails.put("fName", food.getFoodname());
+                                                                                            foodDetails.put("fDescription", food.getDescription());
+                                                                                            foodDetails.put("fRestaurant", food.getRestaurant());
+                                                                                            foodDetails.put("fPrice", food.getPrice());
+                                                                                            foodDetails.put("fQuantity", food.getQuantity());
+                                                                                            foodDetails.put("fTotal", food.getTotal());
+                                                                                            foodDetails.put("fDiscount", food.getDiscount());
+                                                                                            foodDetails.put("fDiscountDesc", food.getDiscountdescription());
+                                                                                            foodDetails.put("fTimestamp", food.getTimestamp());
+                                                                                            foodDetails.put("fUid", food.getUid());
+                                                                                            foodDetails.put("fImage", food.getFoodimage());
 
-                                                                                            medicineOrdersRef.add(medicineDetails)
+                                                                                            medicineOrdersRef.add(foodDetails)
                                                                                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                                                         @Override
                                                                                                         public void onSuccess(DocumentReference documentReference) {

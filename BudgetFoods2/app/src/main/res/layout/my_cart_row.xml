@@ -101,8 +101,9 @@
 
                 <ImageButton
                     android:id="@+id/imageButtonAdd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:contentDescription="Increase"
                     app:srcCompat="@drawable/ic_baseline_add_24" />
 
                 <LinearLayout
@@ -124,8 +125,9 @@
 
                     <ImageButton
                         android:id="@+id/imageButtonRemove"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:contentDescription="Reduce"
                         app:srcCompat="@drawable/ic_remove_24" />
 
                 </LinearLayout>

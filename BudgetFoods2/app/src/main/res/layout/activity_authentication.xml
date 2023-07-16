@@ -24,24 +24,22 @@
 
         <Button
             android:id="@+id/btn_Sign"
-            android:layout_width="253dp"
-            android:layout_height="41dp"
-            android:layout_marginBottom="192dp"
+            android:layout_width="289dp"
+            android:layout_height="81dp"
+            android:layout_marginBottom="152dp"
             android:background="@drawable/custom_button"
             android:fontFamily="@font/montserrat_bold"
             android:text="Signup"
             app:backgroundTint="#f7931e"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btn_Login"
-            android:layout_width="253dp"
-            android:layout_height="41dp"
+            android:layout_width="289dp"
+            android:layout_height="81dp"
             android:background="@drawable/custom_button"
-
             android:fontFamily="@font/montserrat_bold"
             android:text="Login"
             app:backgroundTint="#F7931E"

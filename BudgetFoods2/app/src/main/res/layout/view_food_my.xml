@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -20,35 +19,35 @@
             android:id="@+id/img_food"
             android:layout_width="170dp"
             android:layout_height="154dp"
-            app:srcCompat="@drawable/burgers"
             android:layout_gravity="center_horizontal"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/burgers" />
 
         <TextView
             android:id="@+id/food_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
             android:text="Food Name"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:gravity="center_horizontal" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/descp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Food Description"
             android:layout_marginTop="8dp"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:text="Food Description" />
 
         <TextView
             android:id="@+id/location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Food Location"
             android:layout_marginTop="8dp"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:text="Food Location" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -68,34 +67,25 @@
                 android:id="@+id/new_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/prices"
                 android:text="Shs8"
                 android:textSize="16sp"
-                android:visibility="gone"
                 android:textStyle="bold"
-                android:layout_toEndOf="@id/prices"
-                android:layout_marginStart="8dp" />
-
-            <ImageButton
-                android:id="@+id/addfood"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_baseline_add_24"
-                android:layout_marginStart="8dp" />
-
+                android:visibility="gone" />
         </RelativeLayout>
 
         <TextView
             android:id="@+id/discount_percentage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="9dp"
+            android:gravity="center_horizontal"
             android:text="25% OFF"
             android:textColor="#FF0000"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="9dp"
-            android:layout_marginTop="8dp"
-            android:gravity="center_horizontal" />
+            android:textStyle="bold" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

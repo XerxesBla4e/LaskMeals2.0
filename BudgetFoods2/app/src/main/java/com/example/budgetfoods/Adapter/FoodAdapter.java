@@ -1,5 +1,6 @@
 package com.example.budgetfoods.Adapter;
 
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.example.budgetfoods.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
 
@@ -74,6 +76,8 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
         private TextView descriptionTextView;
         private TextView locationTextView;
         private TextView priceTextView;
+
+        TextView newprice;
         private Button addToCartButton;
 
         public FoodViewHolder(@NonNull View itemView) {
@@ -82,6 +86,7 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             nameTextView = itemView.findViewById(R.id.food_name);
             descriptionTextView = itemView.findViewById(R.id.descp);
             locationTextView = itemView.findViewById(R.id.location);
+            newprice = itemView.findViewById(R.id.new_price);
             priceTextView = itemView.findViewById(R.id.prices);
             addToCartButton = itemView.findViewById(R.id.addfood);
             addToCartButton.setOnClickListener(this);
@@ -92,6 +97,25 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             descriptionTextView.setText(food.getDescription());
             locationTextView.setText(food.getRestaurant());
             priceTextView.setText(String.format("Price: Shs %s", food.getPrice()));
+
+            if (food.getDiscount() != null && !food.getDiscount().isEmpty() && food.getDiscountdescription() != null && !food.getDiscountdescription().isEmpty()) {
+                int discount = Integer.parseInt(food.getDiscount());
+                if (discount > 0 && food.getDiscountdescription().contains("%")) {
+                    double newPrice = Double.parseDouble(food.getPrice()) * (1 - discount / 100.0);
+                    newprice.setVisibility(View.VISIBLE);
+                    newprice.setText(String.format(Locale.getDefault(), "Price: Shs %.2f", newPrice));
+                    // Add crossline through old price
+                    priceTextView.setPaintFlags(priceTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    // Remove crossline if discount condition is not met
+                    priceTextView.setPaintFlags(priceTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    newprice.setVisibility(View.GONE);
+                }
+            } else {
+                // Remove crossline and clear new price if discount conditions are not met
+                priceTextView.setPaintFlags(priceTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                newprice.setVisibility(View.GONE);
+            }
 
             String imagePath = food.getFoodimage();
             try {
@@ -104,8 +128,8 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
                 e.printStackTrace();
                 imageView.setImageResource(R.mipmap.ic_launcher);
             }
-
         }
+
 
 
         @Override
@@ -114,7 +138,7 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     Food food = getItem(position);
-                    onAddToCartClickListener.onAddToCartClick(food,position);
+                    onAddToCartClickListener.onAddToCartClick(food, position);
                 }
             }
         }

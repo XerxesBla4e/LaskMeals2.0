@@ -54,15 +54,16 @@
         android:hint="Password"
         app:boxStrokeColor="#FFFFFF"
         app:boxStrokeWidthFocused="2dp"
-        app:hintTextColor="#5EC5C2">
+        app:endIconMode="password_toggle"
+        app:hintTextColor="#fff0e3"
+        app:startIconTint="#00000B">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
-            android:textColor="#5EC5C2"
-            android:textColorHint="#5EC5C2" />
+            android:textColor="#00000B" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <CheckBox

@@ -43,9 +43,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         // Set the data to the views
         holder.orderIdTextView.setText(order.getOrderID());
         holder.studentNameTextView.setText(order.getOrderBy());
-        // You can set the image for the ImageView here if you have an image for the order.
-
-        // Add any additional view setup or event handling if needed
     }
 
     @Override

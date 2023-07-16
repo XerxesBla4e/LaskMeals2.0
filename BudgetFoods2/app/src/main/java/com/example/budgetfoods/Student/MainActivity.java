@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -22,9 +21,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.FoodAdapter;
+import com.example.budgetfoods.Adapter.ViewFoodAdapter;
 import com.example.budgetfoods.Authentication.LoginActivity;
 import com.example.budgetfoods.Authentication.UpdateProfile;
-import com.example.budgetfoods.Adapter.FoodA;
 import com.example.budgetfoods.Interface.OnAddToCartListener;
 import com.example.budgetfoods.Models.Food;
 import com.example.budgetfoods.R;
@@ -164,9 +163,9 @@ public class MainActivity extends AppCompatActivity {
         adapter = new FoodAdapter();
         bottomNavigationView = activityHomeBinding.bottomNavgation;
         recyclerView = activityHomeBinding.recyclerView;
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Set the desired number of columns
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Set the desired number of columns
     }
 
     private void AddToCart(Food food) {

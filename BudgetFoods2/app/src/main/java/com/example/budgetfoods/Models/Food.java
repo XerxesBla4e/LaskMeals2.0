@@ -21,7 +21,7 @@ public class Food {
     private int quantity;
     private int total;
 
-    public Food(String foodname, String description, String restaurant, String price,String fId,String timestamp,String Uid, String discount, String discountdescription, String foodimage) {
+    public Food(String foodname, String description, String restaurant, String price, String fId, String timestamp, String Uid, String discount, String discountdescription, String foodimage) {
         this.foodname = foodname;
         this.description = description;
         this.restaurant = restaurant;
@@ -33,9 +33,8 @@ public class Food {
         this.discountdescription = discountdescription;
         this.foodimage = foodimage;
         this.quantity = 1;
-        this.total = calculateTotal(); // Calculate total based on initial quantity
+        this.total = recalculateTotal(); // Calculate total based on initial quantity
     }
-
 
     public Food() {
     }
@@ -110,6 +109,7 @@ public class Food {
 
     public void setDiscount(String discount) {
         this.discount = discount;
+        //  recalculateTotal(); // Recalculate total when discount changes
     }
 
     public String getDiscountdescription() {
@@ -118,10 +118,6 @@ public class Food {
 
     public void setDiscountdescription(String discountdescription) {
         this.discountdescription = discountdescription;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
     }
 
     public String getFoodimage() {
@@ -138,16 +134,26 @@ public class Food {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-        this.total = calculateTotal(); // Recalculate total when quantity changes
+        recalculateTotal(); // Recalculate total when quantity changes
     }
-
 
     public int getTotal() {
         return total;
     }
 
-    private int calculateTotal() {
-        // Calculate the total based on quantity and price
-        return quantity * Integer.parseInt(price);
+    private int recalculateTotal() {
+        int originalPrice = Integer.parseInt(price);
+        if (discount != null && !discount.isEmpty() && discountdescription != null && !discountdescription.isEmpty()) {
+            int discountValue = Integer.parseInt(discount);
+            if (discountValue > 0 && discountdescription.contains("%")) {
+                double discountPercentage = discountValue / 100.0;
+                double newPrice = originalPrice * (1 - discountPercentage);
+                total = (int) (newPrice * quantity);
+                return total;
+            }
+        }
+
+        total = originalPrice * quantity;
+        return total;
     }
 }
