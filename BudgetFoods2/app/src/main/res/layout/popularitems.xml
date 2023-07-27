@@ -1,0 +1,82 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="30dp"
+    android:layout_margin="15dp"
+    app:cardElevation="3dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="245dp"
+        android:layout_height="343dp"
+        android:orientation="vertical"
+        android:background="@drawable/card_background">
+
+        <ImageView
+            android:id="@+id/movie_img"
+            android:layout_width="match_parent"
+            android:layout_height="182dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/burgers" />
+
+        <RatingBar
+            android:id="@+id/ratingBar2"
+            style="@style/myratingbar"
+            android:layout_width="79dp"
+            android:layout_height="18dp"
+            android:layout_margin="10dp"
+            android:numStars="5"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/textView33"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delicious Burgers"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/textView34"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Price: USh 13,000"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/custom_button"
+            android:fontFamily="@font/montserrat_bold"
+            android:layout_marginBottom="9dp"
+            android:text="Quick View"
+            android:textColor="#FFFFFF"
+            app:backgroundTint="#f7931e" />
+
+        <TextView
+            android:id="@+id/textView35"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="In Stock"
+            android:textColor="#4CAF50"
+            android:textSize="14sp"
+            android:visibility="visible"
+            android:textStyle="italic"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

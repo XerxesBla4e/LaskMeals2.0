@@ -79,6 +79,7 @@ public class StudentSignup extends AppCompatActivity {
     LocationRequest locationRequest;
     LocationCallback locationCallback;
     LocationManager locationManager;
+    EditText bodedittext;
     public LocationListener locationListener;
     private static int UPDATE_INTERVAL = 5000;
     private static int FASTEST_INTERVAL = 3000;
@@ -96,6 +97,7 @@ public class StudentSignup extends AppCompatActivity {
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     date = sdf.format(bodcalendar.getTime());
+                    bodedittext.setText(date);
                 }
             };
 
@@ -293,6 +295,7 @@ public class StudentSignup extends AppCompatActivity {
         linearLayout = activitySignupBinding.studentlinlayout;
         login = activitySignupBinding.textViewLogin1;
         pickLocation = activitySignupBinding.btnPickLocation;
+        bodedittext = activitySignupBinding.dobEdit;
         pickDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

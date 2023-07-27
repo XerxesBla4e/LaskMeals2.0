@@ -33,6 +33,11 @@
         <item>Other</item>
         <item>Gender</item>
     </string-array>
+    <string-array name="food_group">
+        <item>Popular</item>
+        <item>Menu</item>
+        <item>Latest</item>
+    </string-array>
     <string name="title_activity_maps">MapsActivity</string>
 
 </resources>

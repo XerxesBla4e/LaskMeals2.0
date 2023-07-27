@@ -51,7 +51,8 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Food">
+        android:layout_marginTop="12dp"
+        android:hint="Restaurant Name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/fnameEditText"
@@ -63,7 +64,8 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Source">
+        android:layout_marginTop="12dp"
+        android:hint="Restaurant Description">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/nameEditDescription"
@@ -75,47 +77,11 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Price">
+        android:layout_marginTop="12dp"
+        android:hint="University Closest">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nameEditPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/discountSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:text="Apply Discount" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/discountPriceLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Discount Price"
-        android:visibility="gone">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/discountPriceEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/discountDescriptionLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Discount Description eg.(20%)"
-        android:visibility="gone">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/discountDescriptionEditText"
+            android:id="@+id/nameEditLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -125,6 +91,6 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="55dp"
-        android:text="Add Food" />
+        android:layout_marginTop="35dp"
+        android:text="Add Restaurant" />
 </LinearLayout>

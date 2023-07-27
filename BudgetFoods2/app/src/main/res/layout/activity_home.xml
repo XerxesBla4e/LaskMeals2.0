@@ -1,178 +1,204 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ADD8E6"
-    android:orientation="vertical"
-    android:weightSum="5"
+    android:background="@drawable/back_g_01"
     tools:context=".Student.MainActivity">
 
-    <LinearLayout
+    <!-- ScrollView with Content -->
+    <ScrollView
+        android:id="@+id/oldscrollview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:background="@color/teal_200"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navgation"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageViewLeft"
-            android:layout_width="78dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:padding="8dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher" />
-
-        <SearchView
-            android:id="@+id/editTextSearch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/background_toolbar"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp" />
-
-        <ImageView
-            android:id="@+id/imageViewRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="8dp"
-            android:src="@drawable/ic_baseline_add_24" />
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2">
-
-        <LinearLayout
-            android:id="@+id/lindesc"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@android:color/white">
 
-            <LinearLayout
+            <!-- Header Section -->
+            <TextView
+                android:id="@+id/textView28"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Hi User"
+                android:textColor="#F7931E"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView29"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Order and Eat"
+                android:textColor="#F7931E"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView28" />
+
+            <!-- Search View -->
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/search_view_background"
+                android:queryHint="Search for items"
+                app:layout_constraintBottom_toTopOf="@+id/linlayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView29" />
 
+            <LinearLayout
+                android:id="@+id/linlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/searchView">
+
+                <!-- Add CardView to wrap the ConstraintLayout -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="4dp"
-                    app:cardUseCompatPadding="true">
+                    android:layout_margin="8dp"
+                    android:background="#FFFFFF"
+                    android:elevation="7dp"
+                    app:cardCornerRadius="8dp">
 
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="14dp"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
+                        android:layout_height="wrap_content">
 
-                        <LinearLayout
+                        <!-- ImageView -->
+                        <ImageView
+                            android:id="@+id/imageView14"
+                            android:layout_width="226dp"
+                            android:layout_height="358dp"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/food2" />
+
+                        <!-- TextView (Title) -->
+                        <TextView
+                            android:id="@+id/textView32"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:text="Chicken Veggies"
+                            android:textColor="#03A9F4"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/imageView14"
+                            app:layout_constraintTop_toTopOf="@id/imageView14" />
+
+                        <!-- TextView (Description) -->
+                        <TextView
+                            android:id="@+id/textView35"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:paddingEnd="16dp"
-                            android:paddingRight="16dp">
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="Get yourself delicious chicken and fries"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imageView14"
+                            app:layout_constraintTop_toBottomOf="@id/textView32" />
 
-                            <TextView
-                                android:id="@+id/textViewTitle"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Burgers"
-                                android:textColor="#148CC1"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
+                        <!-- TextView (Price) -->
+                        <TextView
+                            android:id="@+id/textView36"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:text="ush25000"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imageView14"
+                            app:layout_constraintTop_toBottomOf="@id/textView35" />
 
-                            <TextView
-                                android:id="@+id/textViewDescription"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Food Description"
-                                android:textSize="16sp" />
+                        <!-- Button -->
+                        <Button
+                            android:id="@+id/button4"
+                            android:layout_width="134dp"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/montserrat_bold"
+                            android:text="ADD TO CART"
+                            android:textColor="@android:color/white"
+                            app:backgroundTint="#f7931e"
+                            app:layout_constraintStart_toEndOf="@+id/imageView14"
+                            app:layout_constraintTop_toBottomOf="@id/textView36" />
 
-                            <TextView
-                                android:id="@+id/textViewPrice"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="25000 UGX"
-                                android:textColor="#F7931E"
-                                android:textSize="16sp" />
-
-                            <Button
-                                android:id="@+id/buttonAddToCart"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:paddingStart="2dp"
-                                android:paddingEnd="4dp"
-                                android:text="Add to Cart"
-                                android:backgroundTint="@color/greyish"
-                                android:background="@drawable/custom_button"
-                                android:textColor="@color/black"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                        <ImageView
-                            android:id="@+id/imageView3"
-                            android:layout_width="200dp"
-                            android:layout_height="200dp"
-                            android:alpha="0.3"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/food2" />
-
-                    </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lindesc"
-            android:orientation="vertical">
-
+            <!-- Latest Item Section -->
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/textView58"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginLeft="4dp"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Popular Foods"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Featured Restaurants"
+                android:textColor="#2196F3"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/linlayout" />
 
+            <!-- Latest Item RecyclerView (as Grid) -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/recyclerViewpopv"
+                android:layout_width="411dp"
+                android:layout_height="728dp"
+                android:layout_marginTop="16dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView58"
                 app:spanCount="2"
                 tools:listitem="@layout/activity_home_details" />
-        </LinearLayout>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navgation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
-            android:background="#148cc1"
-            app:itemBackground="@color/blue"
-            app:itemIconTint="@drawable/nav_item_colour_selected"
-            app:labelVisibilityMode="unlabeled"
-            app:menu="@menu/bottom_nav_menu" />
-    </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation View -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navgation"
+        android:layout_width="410dp"
+        android:layout_height="66dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/orangewhite"
+        app:itemBackground="@color/orangewhite"
+        app:itemIconTint="@drawable/nav_item_colour_selected"
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

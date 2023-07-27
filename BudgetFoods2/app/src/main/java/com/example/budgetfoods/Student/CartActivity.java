@@ -1,6 +1,7 @@
 package com.example.budgetfoods.Student;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -14,6 +15,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -118,6 +122,7 @@ public class CartActivity extends AppCompatActivity {
             }
         });
 
+        // Inside onClick method of CartActivity
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,10 +131,12 @@ public class CartActivity extends AppCompatActivity {
                 if ((totalp <= 0) && TextUtils.isEmpty(sphone)) {
                     Toast.makeText(getApplicationContext(), "No items to charge", Toast.LENGTH_SHORT).show();
                 } else {
-                    processPayment(totalp, sphone);
+                    // Show the payment options dialog
+                    showPaymentOptionsDialog(totalp, sphone);
                 }
             }
         });
+
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
             @Override
@@ -173,6 +180,35 @@ public class CartActivity extends AppCompatActivity {
         return totalPrice1;
     }
 
+
+    private void showPaymentOptionsDialog(double totalp, String sphone) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_payment_options, null);
+        builder.setView(dialogView);
+
+        // RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroup);
+        RadioButton radioPayOnDelivery = dialogView.findViewById(R.id.radioPayOnDelivery);
+        RadioButton radioPayOnline = dialogView.findViewById(R.id.radioPayOnline);
+
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
+            if (radioPayOnDelivery.isChecked()) {
+                // Handle "Pay on Delivery" option
+                processPayment(totalp, sphone);
+            } else if (radioPayOnline.isChecked()) {
+                // Handle "Pay Online" option
+                processCarOrder();
+            } else {
+                // Handle the case where no option is selected
+                Toast.makeText(getApplicationContext(), "Please select a payment option", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     @SuppressLint("DefaultLocale")
     private void processCarOrder() {
         List<Food> foodcarts = adapter.getCurrentList();
@@ -184,6 +220,7 @@ public class CartActivity extends AppCompatActivity {
                 String desiredAccountType = "Admin";
                 String desiredFoodId = food.getFId();
                 String medicineMPrice1 = food.getPrice();
+
                 // Remove any non-numeric characters from the string
                 String priceWithoutCurrency = medicineMPrice1.replaceAll("[^\\d.]", "");
                 // Parse the price as a double
@@ -202,19 +239,21 @@ public class CartActivity extends AppCompatActivity {
                                     if (querySnapshot != null) {
                                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                             String userId = document.getId();
-                                            // Check if the admin has the desired medicine
-                                            CollectionReference medicineRef = FirebaseFirestore.getInstance().collection("users")
+
+                                            CollectionReference restaurantRef = firestore.collection("users")
                                                     .document(userId)
-                                                    .collection("Food");
-                                            medicineRef.whereEqualTo("fId", desiredFoodId)
+                                                    .collection("Restaurants");
+
+                                            // Check if the restaurant has the desired food item
+                                            restaurantRef.whereEqualTo("Food.fId", desiredFoodId)
                                                     .get()
                                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                             if (task.isSuccessful()) {
-                                                                QuerySnapshot medicineQuerySnapshot = task.getResult();
-                                                                if (medicineQuerySnapshot != null && !medicineQuerySnapshot.isEmpty()) {
-                                                                    // The admin has the desired medicine
+                                                                for (QueryDocumentSnapshot restaurantSnapshot : task.getResult()) {
+                                                                    String restaurantId = restaurantSnapshot.getId();
+
                                                                     // Create a new order for the admin
                                                                     RetrieveAdminToken(userId);
 
@@ -226,68 +265,62 @@ public class CartActivity extends AppCompatActivity {
                                                                     hashMap.put("orderStatus", "In Progress");
                                                                     hashMap.put("orderTo", "" + userId);
                                                                     hashMap.put("orderBy", "" + firebaseAuth.getUid());
-                                                                    //add orderto
 
-                                                                    CollectionReference ordersRef = FirebaseFirestore.getInstance().collection("users")
-                                                                            .document(userId)
+                                                                    // Create a new order for the restaurant (assuming "orders" is the collection name)
+                                                                    CollectionReference ordersRef = restaurantRef
+                                                                            .document(restaurantId)
                                                                             .collection("orders");
-
                                                                     ordersRef.document(timestamp).set(hashMap)
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
-                                                                                public void onSuccess(Void aVoid) {
-                                                                                    // Order added successfully
-                                                                                    List<Food> foodscarts = adapter.getCurrentList();
-                                                                                    for (Food food : foodscarts) {
-                                                                                        // Check if the medicine id falls under the admin's medicines
-                                                                                        if (food.getFId().equals(desiredFoodId)) {
-                                                                                            // Create a new order for the medicine item within the admin's order
-                                                                                            CollectionReference medicineOrdersRef = ordersRef.document(timestamp)
-                                                                                                    .collection("foodOrders");
+                                                                                public void onSuccess(Void unused) {
 
-                                                                                            // Create a HashMap to store the details of the medicine
-                                                                                            HashMap<String, Object> foodDetails = new HashMap<>();
-                                                                                            foodDetails.put("fId", food.getFId());
-                                                                                            foodDetails.put("fName", food.getFoodname());
-                                                                                            foodDetails.put("fDescription", food.getDescription());
-                                                                                            foodDetails.put("fRestaurant", food.getRestaurant());
-                                                                                            foodDetails.put("fPrice", food.getPrice());
-                                                                                            foodDetails.put("fQuantity", food.getQuantity());
-                                                                                            foodDetails.put("fTotal", food.getTotal());
-                                                                                            foodDetails.put("fDiscount", food.getDiscount());
-                                                                                            foodDetails.put("fDiscountDesc", food.getDiscountdescription());
-                                                                                            foodDetails.put("fTimestamp", food.getTimestamp());
-                                                                                            foodDetails.put("fUid", food.getUid());
-                                                                                            foodDetails.put("fImage", food.getFoodimage());
+                                                                                    CollectionReference foodOrdersRef = ordersRef.document(timestamp)
+                                                                                            .collection("foodOrders");
 
-                                                                                            medicineOrdersRef.add(foodDetails)
-                                                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                                                        @Override
-                                                                                                        public void onSuccess(DocumentReference documentReference) {
-                                                                                                            // Medicine order added successfully
-                                                                                                            Toast.makeText(getApplicationContext(), "Food Order Placed Successfully", Toast.LENGTH_SHORT).show();
-                                                                                                            adapter.clearCart();
-                                                                                                            prepareNotificationMessage("New Food Order: ID" + timestamp);
-                                                                                                        }
-                                                                                                    })
-                                                                                                    .addOnFailureListener(new OnFailureListener() {
-                                                                                                        @Override
-                                                                                                        public void onFailure(@NonNull Exception e) {
-                                                                                                            // Error adding medicine order
-                                                                                                            Toast.makeText(getApplicationContext(), e.getMessage() + "", Toast.LENGTH_SHORT).show();
-                                                                                                        }
-                                                                                                    });
-                                                                                        }
-                                                                                    }
+                                                                                    // Create a HashMap to store the details of the medicine
+                                                                                    HashMap<String, Object> foodDetails = new HashMap<>();
+                                                                                    foodDetails.put("fId", food.getFId());
+                                                                                    foodDetails.put("fName", food.getFoodname());
+                                                                                    foodDetails.put("fDescription", food.getDescription());
+                                                                                    foodDetails.put("fRestaurant", food.getRestaurant());
+                                                                                    foodDetails.put("fPrice", food.getPrice());
+                                                                                    foodDetails.put("fQuantity", food.getQuantity());
+                                                                                    foodDetails.put("fTotal", food.getTotal());
+                                                                                    foodDetails.put("fDiscount", food.getDiscount());
+                                                                                    foodDetails.put("fDiscountDesc", food.getDiscountdescription());
+                                                                                    foodDetails.put("fTimestamp", food.getTimestamp());
+                                                                                    foodDetails.put("fUid", food.getUid());
+                                                                                    foodDetails.put("fImage", food.getFoodimage());
+
+                                                                                    foodOrdersRef.add(foodDetails)
+                                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                                                    Toast.makeText(getApplicationContext(), "Food Order Placed Successfully", Toast.LENGTH_SHORT).show();
+                                                                                                    adapter.clearCart();
+                                                                                                    prepareNotificationMessage("New Food Order: ID" + timestamp);
+                                                                                                }
+                                                                                            })
+                                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                                @Override
+                                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                                    // Error adding medicine order
+                                                                                                    Toast.makeText(getApplicationContext(), e.getMessage() + "", Toast.LENGTH_SHORT).show();
+
+                                                                                                }
+                                                                                            });
+
+
                                                                                 }
                                                                             })
                                                                             .addOnFailureListener(new OnFailureListener() {
                                                                                 @Override
                                                                                 public void onFailure(@NonNull Exception e) {
-                                                                                    // Error adding order
-                                                                                    Toast.makeText(getApplicationContext(), "Failed to process order " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                                                                 }
                                                                             });
+
                                                                 }
                                                             } else {
                                                                 // Handle the error
@@ -311,6 +344,7 @@ public class CartActivity extends AppCompatActivity {
                         });
             }
             textView.setText(String.format("TOTAL COST:UG X %s", totalPrice));
+            textView.requestLayout();
         }
     }
 

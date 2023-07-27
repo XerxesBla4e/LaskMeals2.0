@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,19 +24,15 @@ import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.OrderAdapter;
 import com.example.budgetfoods.Authentication.LoginActivity;
-import com.example.budgetfoods.Authentication.UpdateProfile;
 import com.example.budgetfoods.Interface.OnMoveToDetsListener;
 import com.example.budgetfoods.Models.Order;
 import com.example.budgetfoods.R;
-import com.example.budgetfoods.Student.CartActivity;
-import com.example.budgetfoods.Student.ClientDetailsActivity;
-import com.example.budgetfoods.Student.MainActivity;
-import com.example.budgetfoods.Student.OrdersActivity;
 import com.example.budgetfoods.databinding.ActivityAdminMainBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +42,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -102,9 +100,9 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent x6 = new Intent(getApplicationContext(), AddFood.class);
-                x6.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(x6);
+                Intent x0 = new Intent(getApplicationContext(), ViewRestaurants.class);
+                x0.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(x0);
             }
         });
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -155,18 +153,28 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         if (position != RecyclerView.NO_POSITION) {
             Order order = orderList.get(position);
 
-            DocumentReference medicineRef = firestore.collection("users")
+            String restaurantId = order.getOrderTo(); // Get the restaurantId from the order
+
+            CollectionReference restaurantRef = firestore.collection("users")
                     .document(uid1)
+                    .collection("Restaurant");
+
+            DocumentReference orderRef = restaurantRef
+                    .document(restaurantId)
                     .collection("orders")
                     .document(order.getOrderID());
 
-            medicineRef.delete()
+            orderRef.delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Toast.makeText(AdminMain.this, "Order deleted", Toast.LENGTH_SHORT).show();
                             orderList.remove(position);
                             orderAdapter.notifyItemRemoved(position);
+
+                            // Delete the associated food items subcollection
+                            CollectionReference foodOrdersRef = orderRef.collection("foodOrders");
+                            deleteFoodItems(foodOrdersRef);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -178,29 +186,79 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         }
     }
 
+    // Helper method to delete the food items subcollection
+    private void deleteFoodItems(CollectionReference foodOrdersRef) {
+        foodOrdersRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                List<Task<Void>> deleteTasks = new ArrayList<>();
+                for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                    deleteTasks.add(documentSnapshot.getReference().delete());
+                }
+
+                Tasks.whenAll(deleteTasks)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(AdminMain.this, "Associated food items deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(AdminMain.this, "Failed to delete associated food items: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+    }
+
     private void retrieveOrders() {
-        CollectionReference ordersRef = firestore.collection("users")
+        CollectionReference restaurantRef = firestore.collection("users")
                 .document(uid1)
-                .collection("orders");
+                .collection("Restaurants");
 
         orderList = new ArrayList<>();
 
-        ordersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        restaurantRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     QuerySnapshot querySnapshot = task.getResult();
                     if (querySnapshot != null) {
-                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                            String orderID = document.getString("orderID");
-                            String orderTime = document.getString("orderTime");
-                            String orderStatus = document.getString("orderStatus");
-                            String orderTo = document.getString("orderTo");
-                            String student = document.getString("orderBy");
-                            Order orders = new Order(orderID, orderTime, orderStatus, orderTo, student);
-                            orderList.add(orders);
+                        for (QueryDocumentSnapshot restaurantSnapshot : querySnapshot) {
+                            String restaurantId = restaurantSnapshot.getId();
+
+                            CollectionReference ordersRef = restaurantRef
+                                    .document(restaurantId)
+                                    .collection("orders");
+
+                            ordersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        QuerySnapshot ordersSnapshot = task.getResult();
+                                        if (ordersSnapshot != null) {
+                                            for (DocumentSnapshot orderDocument : ordersSnapshot) {
+                                                String orderID = orderDocument.getString("orderID");
+                                                String orderTime = orderDocument.getString("orderTime");
+                                                String orderStatus = orderDocument.getString("orderStatus");
+                                                String orderTo = orderDocument.getString("orderTo");
+                                                String student = orderDocument.getString("orderBy");
+                                                Order orders = new Order(orderID, orderTime, orderStatus, orderTo, student);
+                                                orderList.add(orders);
+                                            }
+                                            orderAdapter.notifyDataSetChanged();
+                                        }
+                                    } else {
+                                        Exception exception = task.getException();
+                                        if (exception != null) {
+                                            // Log or display the error message
+                                        }
+                                    }
+                                }
+                            });
                         }
-                        orderAdapter.notifyDataSetChanged();
                     }
                 } else {
                     Exception exception = task.getException();
@@ -213,6 +271,7 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private void initViews(ActivityAdminMainBinding activityAdminMainBinding) {
         bottomNavigationView = activityAdminMainBinding.bottomNavgation;
         floatingActionButton = activityAdminMainBinding.fab;
@@ -223,6 +282,7 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         orderList = new ArrayList<>();
         orderAdapter = new OrderAdapter(getApplicationContext(), orderList);
         recyclerView.setAdapter(orderAdapter);
+        orderAdapter.notifyDataSetChanged();
 
     }
 
@@ -290,7 +350,7 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
                     x.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(x);
                 } else if (item.getItemId() == R.id.nav_food) {
-                    Intent x6 = new Intent(getApplicationContext(), AddFood.class);
+                    Intent x6 = new Intent(getApplicationContext(), AddRestaurant.class);
                     x6.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(x6);
                 } else if (item.getItemId() == R.id.nav_logout) {
@@ -298,10 +358,8 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
                     firebaseAuth.signOut();
                     startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                     finish();
-                }else if(item.getItemId()==R.id.nav_viewfood){
-                    Intent x0 = new Intent(getApplicationContext(), ViewMyFoods.class);
-                    x0.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(x0);
+                } else if (item.getItemId() == R.id.nav_viewfood) {
+
                 }
             }
         });

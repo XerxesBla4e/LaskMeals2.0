@@ -3,12 +3,11 @@ package com.example.budgetfoods.Student;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.Application;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,14 +19,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.budgetfoods.Adapter.FoodAdapter;
-import com.example.budgetfoods.Adapter.ViewFoodAdapter;
 import com.example.budgetfoods.Authentication.LoginActivity;
 import com.example.budgetfoods.Authentication.UpdateProfile;
-import com.example.budgetfoods.Interface.OnAddToCartListener;
-import com.example.budgetfoods.Models.Food;
+import com.example.budgetfoods.Interface.OnMoveToResDetsListener;
+import com.example.budgetfoods.Models.Restaurant;
+import com.example.budgetfoods.NewAdapters.RestaurantAdapter1;
 import com.example.budgetfoods.R;
-import com.example.budgetfoods.ViewModel.FoodViewModel;
 import com.example.budgetfoods.databinding.ActivityHomeBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,18 +42,18 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     ActivityHomeBinding activityHomeBinding;
-
-    private FoodViewModel foodViewModel;
+    // private FoodViewModel foodViewModel;
     RecyclerView recyclerView;
-    FoodAdapter adapter;
+    RestaurantAdapter1 restaurantAdapter1;
     FirebaseAuth firebaseAuth;
     FirebaseFirestore firestore;
-    ArrayList<Food> foodList;
+    List<Restaurant> restaurantList;
     private LocationManager locationManager;
     private LocationListener locationListener;
     BottomNavigationView bottomNavigationView;
@@ -82,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     uid1 = user.getUid();
-                    retrieveFoods();
+                    retrieveMenuRestaurants();
                     requestLocationUpdates();
                 } else {
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -93,14 +90,22 @@ public class MainActivity extends AppCompatActivity {
 
         initBottomNavView();
 
-        foodViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory
+        restaurantAdapter1.setOnMoveToResDetsListener(new OnMoveToResDetsListener() {
+            @Override
+            public void onMoveToDets(Restaurant restaurant, int position) {
+                Intent intent = new Intent(getApplicationContext(), RestaurantFoods.class);
+                intent.putExtra("restaurantModel", restaurant);
+                startActivity(intent);
+            }
+        });
+      /*  foodViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory
                 .getInstance((Application) this.getApplicationContext())).get(FoodViewModel.class);
         adapter.setOnAddToCartClickListener(new OnAddToCartListener() {
             @Override
             public void onAddToCartClick(Food food, int position) {
                 AddToCart(food);
             }
-        });
+        });*/
 
 
     }
@@ -125,6 +130,16 @@ public class MainActivity extends AppCompatActivity {
             public void onProviderDisabled(String provider) {
             }
         };
+
+      /*  popularFoodadapter.setOnAddToCartClickListener(new OnAddToCartListener() {
+            @Override
+            public void onAddToCartClick(Food food, int position) {
+                Food food2 = new Food(food.getFoodname(), food.getDescription(), food.getRestaurant(),
+                        food.getPrice(), food.getFId(), food.getTimestamp(), food.getUid(), food.getDiscount(), food.getDescription(),
+                        food.getFoodimage());
+                foodViewModel.insert(food2);
+            }
+        });*/
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -159,20 +174,22 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void initViews(ActivityHomeBinding activityHomeBinding) {
-        adapter = new FoodAdapter();
-        bottomNavigationView = activityHomeBinding.bottomNavgation;
-        recyclerView = activityHomeBinding.recyclerView;
+        // Set Menu Recycler
+        restaurantList = new ArrayList<>();
+        restaurantAdapter1 = new RestaurantAdapter1(getApplicationContext(), restaurantList);
+        recyclerView = activityHomeBinding.recyclerViewpopv;
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Set the desired number of columns
-    }
+        recyclerView.setAdapter(restaurantAdapter1);
+        // Use GridLayoutManager for SetMenuRecycler with 2 columns
+        int numberOfColumns = 2;
+        recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
 
-    private void AddToCart(Food food) {
-        Food food1 = new Food(food.getFoodname(), food.getDescription(), food.getRestaurant(),
-                food.getPrice(), food.getFId(), food.getTimestamp(), food.getUid(), food.getDiscount(), food.getDescription(),
-                food.getFoodimage());
-        foodViewModel.insert(food1);
+        // Notify the adapter after any changes in the data
+        restaurantAdapter1.notifyDataSetChanged();
+
+        bottomNavigationView = activityHomeBinding.bottomNavgation;
     }
 
     private void initBottomNavView() {
@@ -202,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void retrieveFoods() {
+    private void retrieveMenuRestaurants() {
         String desiredAccountType = "Admin";
 
         CollectionReference usersRef = firestore.collection("users");
@@ -213,33 +230,34 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            foodList = new ArrayList<>(); // New list to hold the retrieved foods
+                            restaurantList = new ArrayList<>(); // New list to hold the retrieved restaurants
 
                             for (QueryDocumentSnapshot userDocument : task.getResult()) {
                                 String userId = userDocument.getId();
 
-                                CollectionReference userFoodsRef = usersRef.document(userId)
-                                        .collection("Food");
+                                CollectionReference userRestaurantsRef = usersRef.document(userId).collection("Restaurants");
 
-                                userFoodsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot foodDocument : task.getResult()) {
-                                                // Retrieve the food data from the document
-                                                Food food = foodDocument.toObject(Food.class);
+                                userRestaurantsRef
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot restaurantDocument : task.getResult()) {
+                                                        // Retrieve the restaurant data from the document
+                                                        Restaurant restaurant = restaurantDocument.toObject(Restaurant.class);
 
-                                                // Add the FoodA object to the list
-                                                foodList.add(food);
+                                                        // Add the Restaurant object to the list
+                                                        restaurantList.add(restaurant);
+                                                    }
+
+                                                    // Update the adapter with the retrieved restaurant list
+                                                    restaurantAdapter1.updateRestaurantList(restaurantList);
+                                                } else {
+                                                    Log.d("TAG", "Error getting menu restaurants: " + task.getException());
+                                                }
                                             }
-
-                                            // Update the adapter with the retrieved food list
-                                            adapter.updateFoodList(foodList);
-                                        } else {
-                                            Log.d("TAG", "Error getting foods: " + task.getException());
-                                        }
-                                    }
-                                });
+                                        });
                             }
                         } else {
                             Log.d("TAG", "Error getting users: " + task.getException());
@@ -247,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     private void makeOffline() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();

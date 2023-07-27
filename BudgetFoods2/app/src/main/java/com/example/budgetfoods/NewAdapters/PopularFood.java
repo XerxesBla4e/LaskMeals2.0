@@ -1,6 +1,6 @@
-package com.example.budgetfoods.Adapter;
+package com.example.budgetfoods.NewAdapters;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Paint;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,77 +13,64 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetfoods.Interface.OnAddToCartListener;
-import com.example.budgetfoods.Interface.OnQuantityChangeListener;
 import com.example.budgetfoods.Models.Food;
 import com.example.budgetfoods.R;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
+public class PopularFood extends RecyclerView.Adapter<PopularFood.PopularFoodViewHolder>{
     private OnAddToCartListener onAddToCartClickListener;
     private TextView name, price2, newprice2, description, totalamount, quantitytextview;
     private ImageButton addQty, reduceQty;
-    private RatingBar ratingBar;
-    private Button addToCartBtn;
 
-    public FoodAdapter() {
-        super(CALLBACK);
+    private RatingBar ratingBar;
+    //  private OnQuantityChangeListener quantityChangeListener;
+    private Button addToCartBtn;
+    private Context context;
+    private List<Food> foodList;
+
+    public PopularFood(Context context, List<Food> foodList) {
+        this.context = context;
+        this.foodList = foodList;
     }
 
     public void setOnAddToCartClickListener(OnAddToCartListener listener) {
         onAddToCartClickListener = listener;
     }
 
-    private static final DiffUtil.ItemCallback<Food> CALLBACK = new DiffUtil.ItemCallback<Food>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Food oldItem, @NonNull Food newItem) {
-            return oldItem.getId() == newItem.getId();
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Food oldItem, @NonNull Food newItem) {
-            return oldItem.getFoodname().equals(newItem.getFoodname())
-                    && oldItem.getDescription().equals(newItem.getDescription())
-                    && oldItem.getRestaurant().equals(newItem.getRestaurant())
-                    && oldItem.getPrice().equals(newItem.getPrice())
-                    && oldItem.getDiscount().equals(newItem.getDiscount())
-                    && oldItem.getDiscountdescription().equals(newItem.getDiscountdescription())
-                    && oldItem.getFoodimage().equals(newItem.getFoodimage())
-                    && oldItem.getQuantity() == newItem.getQuantity()
-                    && oldItem.getTotal() == newItem.getTotal();
-        }
-    };
-
     @NonNull
     @Override
-    public FoodViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.specificrestrecyclerview, parent, false);
-        return new FoodViewHolder(view);
+    public PopularFoodViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.popularitems, parent, false);
+        return new PopularFoodViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
-        Food food = getItem(holder.getAdapterPosition());
-        holder.bind(food);
+    public void onBindViewHolder(@NonNull PopularFoodViewHolder holder, int position) {
+        Food food = foodList.get(position);
 
-        // Set the button click listener here in onBindViewHolder
-        holder.imageButton.setOnClickListener(v -> {
+        // Populate the views with data from the Food object
+        holder.imageView.setImageResource(R.drawable.burgers); // Use your own logic to set the image resource
+        holder.ratingBar.setRating(4.5f); // Use your own logic to set the rating
+        holder.foodNameTextView.setText(food.getFoodname());
+        holder.priceTextView.setText(String.format("Price: USh %s", food.getPrice()));
+        holder.inStockTextView.setVisibility(View.VISIBLE); // Assuming all foods are in stock
+
+        holder.quickViewButton.setOnClickListener(v -> {
             DialogPlus dialogPlus = DialogPlus.newDialog(holder.itemView.getContext())
                     .setContentHolder(new ViewHolder(R.layout.popupmenu))
                     .setExpanded(true, 1100)
                     .setGravity(Gravity.BOTTOM) // Set the dialog to appear from the bottom
                     .create();
             View dialogView = dialogPlus.getHolderView();
-
 
             ImageView imageView1 = dialogView.findViewById(R.id.imageView0);
             addQty = dialogView.findViewById(R.id.imageButtonAdd);
@@ -152,7 +139,6 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             }
             // Set the quantity and handle its click listeners
             quantitytextview.setText(String.valueOf(food.getQuantity()));
-
             dialogPlus.show();
         });
     }
@@ -179,72 +165,35 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
     }
 
 
-    public void updateFoodList(List<Food> foodList) {
-        submitList(foodList);
+    @Override
+    public int getItemCount() {
+        return foodList.size();
     }
 
-    public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private ImageView imageView;
-        private TextView nameTextView;
-        private TextView priceTextView;
-        private TextView newprice; // New TextView for displaying discounted price
-        private ImageButton imageButton;
+    public void updateFoodList1(ArrayList<Food> foodList) {
+        this.foodList = foodList;
+        notifyDataSetChanged();
+    }
 
-        public FoodViewHolder(@NonNull View itemView) {
+    public class PopularFoodViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+        RatingBar ratingBar;
+        TextView foodNameTextView;
+        TextView priceTextView;
+        Button quickViewButton;
+        TextView inStockTextView;
+
+        public PopularFoodViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.movie_img);
-            nameTextView = itemView.findViewById(R.id.textView33);
+            ratingBar = itemView.findViewById(R.id.ratingBar2);
+            foodNameTextView = itemView.findViewById(R.id.textView33);
             priceTextView = itemView.findViewById(R.id.textView34);
-            newprice= itemView.findViewById(R.id.new_price); // Initialize the new price TextView
-            imageButton = itemView.findViewById(R.id.imageButton6);
-        }
+            quickViewButton = itemView.findViewById(R.id.button2);
+            inStockTextView = itemView.findViewById(R.id.textView35);
 
-        public void bind(Food food) {
-            nameTextView.setText(food.getFoodname());
-            priceTextView.setText(String.format("Price: Shs %s", food.getPrice()));
-
-            if (food.getDiscount() != null && !food.getDiscount().isEmpty() && food.getDiscountdescription() != null && !food.getDiscountdescription().isEmpty()) {
-                int discount = Integer.parseInt(food.getDiscount());
-                if (discount > 0 && food.getDiscountdescription().contains("%")) {
-                    double newPrice = Double.parseDouble(food.getPrice()) * (1 - discount / 100.0);
-                    newprice.setVisibility(View.VISIBLE);
-                    newprice.setText(String.format(Locale.getDefault(), "Price: Shs %.2f", newPrice));
-                    // Add crossline through old price
-                    priceTextView.setPaintFlags(priceTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                } else {
-                    // Remove crossline if discount condition is not met
-                    priceTextView.setPaintFlags(priceTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                    newprice.setVisibility(View.GONE);
-                }
-            } else {
-                // Remove crossline and clear new price if discount conditions are not met
-                priceTextView.setPaintFlags(priceTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                newprice.setVisibility(View.GONE);
-            }
-
-            String imagePath = food.getFoodimage();
-            try {
-                if (imagePath != null && !imagePath.isEmpty()) {
-                    Picasso.get().load(food.getFoodimage()).into(imageView);
-                } else {
-                    imageView.setImageResource(R.mipmap.ic_launcher);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                imageView.setImageResource(R.mipmap.ic_launcher);
-            }
-        }
-
-
-        @Override
-        public void onClick(View view) {
-            if (onAddToCartClickListener != null) {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    Food food = getItem(position);
-                    onAddToCartClickListener.onAddToCartClick(food, position);
-                }
-            }
         }
     }
+
 }
+

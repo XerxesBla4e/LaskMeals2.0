@@ -2,12 +2,14 @@ package com.example.budgetfoods.Authentication;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -20,6 +22,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -65,6 +68,7 @@ public class AdminSignup extends AppCompatActivity {
     private Calendar bodcalendar = Calendar.getInstance();
     EditText bodedittext;
     Button pickDOB, pickLocation, submit;
+    public final static String specialk = "LASCKMXER";
     public static final int PERMISSION_REQUEST_CODE = 444;
     String date, name, age, email, phonenumber, university, location, password, repass, gender;
     String district, city, state, country, address;
@@ -101,6 +105,7 @@ public class AdminSignup extends AppCompatActivity {
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     date = sdf.format(bodcalendar.getTime());
+                    bodedittext.setText(date);
                     //bodedittext.setText(new SimpleDateFormat("yyyy-MM-dd").format(bodcalendar.getTime()));
                 }
             };
@@ -145,35 +150,10 @@ public class AdminSignup extends AppCompatActivity {
                 if (!validateFields()) {
                     return;
                 } else {
-                    progressBar.setIndeterminate(true);
-                    progressBar.setVisibility(View.VISIBLE);
-
-                    ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    if (progressBar.getParent() != null) {
-                        ((ViewGroup) progressBar.getParent()).removeView(progressBar);
-                    }
-
-                    linearLayout.addView(progressBar, layoutParams);
-
-                    mAuth.createUserWithEmailAndPassword(email, password)
-                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                @Override
-                                public void onSuccess(AuthResult authResult) {
-                                    String uid = authResult.getUser().getUid();
-                                    uploadData(uid);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(getApplicationContext(), e + "", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    showSpecialKeyDialog();
                 }
             }
         });
-
         pickLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -264,6 +244,73 @@ public class AdminSignup extends AppCompatActivity {
                     }
                 });
     }
+
+    private void showSpecialKeyDialog() {
+        LayoutInflater inflater = LayoutInflater.from(AdminSignup.this);
+        View dialogView = inflater.inflate(R.layout.special_key_popup, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(AdminSignup.this);
+        builder.setTitle("Enter Special Key");
+        builder.setView(dialogView);
+
+        final EditText input = dialogView.findViewById(R.id.editTextSpecialKey);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String specialKey = input.getText().toString().trim();
+                if (TextUtils.isEmpty(specialKey)) {
+                    Toast.makeText(AdminSignup.this, "Please enter a special key", Toast.LENGTH_SHORT).show();
+                    showSpecialKeyDialog(); // Show dialog again if the special key is empty
+                } else {
+                    // Proceed with the special key
+                    // Call a method or perform the desired action with the special key
+                    if (specialKey.equals(specialk)) {
+                        processData();
+                    }
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+    private void processData() {
+        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(View.VISIBLE);
+
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (progressBar.getParent() != null) {
+            ((ViewGroup) progressBar.getParent()).removeView(progressBar);
+        }
+
+        linearLayout.addView(progressBar, layoutParams);
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        String uid = authResult.getUser().getUid();
+                        uploadData(uid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(), e + "", Toast.LENGTH_SHORT).show();
+                    }
+        });
+    }
+
 
     private void initViews(AdminsignupBinding adminsignupBinding) {
         progressBar = new ProgressBar(getApplicationContext(), null, android.R.attr.progressBarStyleLarge);

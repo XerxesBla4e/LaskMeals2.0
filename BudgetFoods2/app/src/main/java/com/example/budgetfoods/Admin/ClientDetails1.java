@@ -34,6 +34,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class ClientDetails1 extends AppCompatActivity {
     RecyclerView recyclerView;
     TextView studentname, location1, status1, totalprice;
     ImageView edit, delete;
-
+    String restaurant54;
     Order ordersModel;
     List<FoodModel> orderList;
     String notstudenttoken;
@@ -84,46 +85,83 @@ public class ClientDetails1 extends AppCompatActivity {
             OrderBy = ordersModel.getOrderBy();
             status1.setText(ordersModel.getOrderStatus());
         }
+
         // Create a Firestore query to retrieve the food orders for the specific order and user
-        CollectionReference medicineOrdersRef = FirebaseFirestore.getInstance().collection("users")
+        CollectionReference medicineOrdersRef = FirebaseFirestore.getInstance().collection("users");
+        // Modify the query to fetch orders from nested sub-collections
+        CollectionReference ordersRef = medicineOrdersRef
                 .document(id)
-                .collection("orders")
-                .document(OrderID)
-                .collection("foodOrders");
+                .collection("Restaurants");
 
         // Perform the query
-        medicineOrdersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        ordersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @SuppressLint({"DefaultLocale", "NotifyDataSetChanged"})
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     QuerySnapshot querySnapshot = task.getResult();
                     if (!querySnapshot.isEmpty()) {
-                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                            FoodModel foodOrder = document.toObject(FoodModel.class);
-                            String foodMPrice1 = foodOrder != null ? foodOrder.getFPrice() : null;
-                            double mPrice = 0.0;
+                        total = 0.0;
+                        orderList.clear();
 
-                            try {
-                                if (foodMPrice1 != null) {
-                                    mPrice = Double.parseDouble(foodMPrice1);
-                                    total += mPrice;
+                        for (QueryDocumentSnapshot restaurantSnapshot : querySnapshot) {
+                            String restaurantId = restaurantSnapshot.getId();
+
+                            CollectionReference foodOrdersRef = ordersRef
+                                    .document(restaurantId)
+                                    .collection("orders")
+                                    .document(OrderID)
+                                    .collection("foodOrders");
+
+                            // Perform the query to fetch food orders
+                            foodOrdersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @SuppressLint("DefaultLocale")
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> foodOrderTask) {
+                                    if (foodOrderTask.isSuccessful()) {
+                                        QuerySnapshot foodOrderSnapshot = foodOrderTask.getResult();
+                                        if (!foodOrderSnapshot.isEmpty()) {
+                                            for (DocumentSnapshot document : foodOrderSnapshot.getDocuments()) {
+                                                FoodModel foodOrder = document.toObject(FoodModel.class);
+                                                if (foodOrder != null) {
+                                                    String foodMPrice1 = foodOrder.getFPrice();
+                                                    //restaurant54 = foodOrder.getFRestaurant();
+                                                    double mPrice = 0.0;
+
+                                                    try {
+                                                        if (foodMPrice1 != null) {
+                                                            mPrice = Double.parseDouble(foodMPrice1);
+                                                            total += mPrice;
+                                                        }
+                                                    } catch (NumberFormatException e) {
+                                                        // Handle the NumberFormatException, such as logging an error or displaying an error message
+                                                        Log.e("ClientDetails1", "Error parsing food price: " + e.getMessage());
+                                                    }
+
+                                                    orderList.add(foodOrder);
+                                                }
+                                            }
+                                            // Notify the adapter of data change
+                                            OrdersAdapter.setFoodModelList(orderList);
+                                            OrdersAdapter.notifyDataSetChanged();
+
+                                            // Update the total price
+                                            totalprice.setText(String.format("%.2f", total));
+                                            totalprice.requestLayout();
+                                        }
+                                    } else {
+                                        // Handle the error in fetching food orders
+                                        Exception exception = foodOrderTask.getException();
+                                        if (exception != null) {
+                                            // Log or display the error message
+                                        }
+                                    }
                                 }
-                            } catch (NumberFormatException e) {
-                                // Handle the NumberFormatException, such as logging an error or displaying an error message
-                                Log.e("ClientDetails1", "Error parsing food price: " + e.getMessage());
-                            }
-
-                            orderList.add(foodOrder);
-
+                            });
                         }
-                        OrdersAdapter.setFoodModelList(orderList);
-                        OrdersAdapter.notifyDataSetChanged();
-                        totalprice.setText(String.format("%.2f", total));
-                        totalprice.requestLayout();
                     }
                 } else {
-                    // Handle the error
+                    // Handle the error in fetching restaurant orders
                     Exception exception = task.getException();
                     if (exception != null) {
                         // Log or display the error message
@@ -188,19 +226,46 @@ public class ClientDetails1 extends AppCompatActivity {
     private void updateOrderStatus(String message) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Create a reference to the specific order document
-        DocumentReference orderRef = db.collection("users")
+        // Create a reference to the restaurants collection for the user
+        CollectionReference restaurantsRef = db.collection("users")
                 .document(id)
-                .collection("orders")
-                .document(OrderID);
+                .collection("Restaurants");
 
-        // Update the orderStatus field with the new message
-        orderRef.update("orderStatus", message)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        // Query the restaurants collection for the user
+        restaurantsRef.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(getApplicationContext(), "Order is now " + message, Toast.LENGTH_SHORT).show();
-                        prepareNotificationMessage(message);
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        // Loop through each restaurant document to find the correct restaurantId
+                        for (QueryDocumentSnapshot restaurantDoc : queryDocumentSnapshots) {
+                            String restaurantId = restaurantDoc.getId();
+
+                            // Create a reference to the specific order document
+                            DocumentReference orderRef = db.collection("users")
+                                    .document(id)
+                                    .collection("Restaurants")
+                                    .document(restaurantId)
+                                    .collection("orders")
+                                    .document(OrderID);
+
+                            // Update the orderStatus field with the new message
+                            orderRef.update("orderStatus", message)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            // Order status updated successfully for this restaurant
+                                            Toast.makeText(getApplicationContext(), "Order is now " + message + " for restaurant: " + restaurantDoc.getString("name"), Toast.LENGTH_SHORT).show();
+                                            prepareNotificationMessage(message);
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Failed to update order status for this restaurant
+                                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -209,7 +274,6 @@ public class ClientDetails1 extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
     }
 
     private void prepareNotificationMessage(String message) {
