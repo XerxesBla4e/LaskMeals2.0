@@ -219,7 +219,7 @@ public class AdminSignup extends AppCompatActivity {
         user.put("timestamp", "" + timestamp);
         user.put("latitude", "" + longitude);
         user.put("longitude", "" + latitude);
-        user.put("accounttype", "Student");
+        user.put("accounttype", "Admin");
         user.put("online", "true");
         user.put("token", token);
 
