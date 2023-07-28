@@ -39,27 +39,30 @@ public class OrdersActivity extends AppCompatActivity {
         initViews();
         firebaseAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setHasFixedSize(true);
+
+        orderList = new ArrayList<>();
+        orderAdapter = new OrderAdapter(orderList,getApplicationContext());
+        recyclerView.setAdapter(orderAdapter);
+
         fetchOrders();
 
-        orderAdapter.setOnMoveToDetsListener(new OnMoveToDetsListener() {
+    /*    orderAdapter.setOnMoveToDetsListener(new OnMoveToDetsListener() {
             @Override
             public void onMoveToDets(Order order) {
                 Intent intent = new Intent(getApplicationContext(), ClientDetailsActivity.class);
                 intent.putExtra("ordersModel", order);
                 startActivity(intent);
             }
-        });
+        });*/
     }
 
     private void initViews() {
         recyclerView = fragmentCartBinding.recyclerview11;
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerView.setHasFixedSize(true);
-
-        orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(getApplicationContext(), orderList);
-        recyclerView.setAdapter(orderAdapter);
-
     }
 
     private void fetchOrders() {
@@ -68,11 +71,11 @@ public class OrdersActivity extends AppCompatActivity {
         usersCollectionRef.whereEqualTo("accountType", "Admin")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    orderList.clear();
+                   // orderList.clear();
                     for (QueryDocumentSnapshot userSnapshot : queryDocumentSnapshots) {
                         CollectionReference ordersCollectionRef = userSnapshot.getReference()
                                 .collection("Orders");
-                        ordersCollectionRef.whereEqualTo("orderBy", firebaseAuth.getUid())
+                        ordersCollectionRef.whereEqualTo("orderTo", firebaseAuth.getUid())
                                 .get()
                                 .addOnSuccessListener(queryDocumentSnapshots1 -> {
                                     if (!queryDocumentSnapshots1.isEmpty()) {

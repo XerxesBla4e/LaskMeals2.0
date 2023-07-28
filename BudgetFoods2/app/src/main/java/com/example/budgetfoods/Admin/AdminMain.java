@@ -62,6 +62,7 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
     FirebaseAuth firebaseAuth;
     FirebaseFirestore firestore;
     FirebaseUser firebaseUser;
+    Order orders;
     String uid1;
     RecyclerView recyclerView;
     private LocationManager locationManager;
@@ -109,7 +110,7 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
                 if (user != null) {
                     uid1 = user.getUid();
                     requestLocationUpdates();
-                    retrieveOrders();
+                    fetchOrders();
                 } else {
                     startActivity(new Intent(AdminMain.this, LoginActivity.class));
                     finish();
@@ -235,62 +236,6 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         });
     }
 
-    private void retrieveOrders() {
-        CollectionReference restaurantRef = firestore.collection("users")
-                .document(uid1)
-                .collection("Restaurants");
-
-        orderList = new ArrayList<>();
-
-        restaurantRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    QuerySnapshot querySnapshot = task.getResult();
-                    if (querySnapshot != null) {
-                        for (QueryDocumentSnapshot restaurantSnapshot : querySnapshot) {
-                            String restaurantId = restaurantSnapshot.getId();
-
-                            CollectionReference ordersRef = restaurantRef
-                                    .document(restaurantId)
-                                    .collection("orders");
-
-                            ordersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        QuerySnapshot ordersSnapshot = task.getResult();
-                                        if (ordersSnapshot != null) {
-                                            for (DocumentSnapshot orderDocument : ordersSnapshot) {
-                                                String orderID = orderDocument.getString("orderID");
-                                                String orderTime = orderDocument.getString("orderTime");
-                                                String orderStatus = orderDocument.getString("orderStatus");
-                                                String orderTo = orderDocument.getString("orderTo");
-                                                String student = orderDocument.getString("orderBy");
-                                                Order orders = new Order(orderID, orderTime, orderStatus, orderTo, student);
-                                                orderList.add(orders);
-                                            }
-                                            orderAdapter.notifyDataSetChanged();
-                                        }
-                                    } else {
-                                        Exception exception = task.getException();
-                                        if (exception != null) {
-                                            // Log or display the error message
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    }
-                } else {
-                    Exception exception = task.getException();
-                    if (exception != null) {
-                        // Log or display the error message
-                    }
-                }
-            }
-        });
-    }
 
 
     @SuppressLint("NotifyDataSetChanged")
@@ -302,10 +247,45 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         recyclerView.setHasFixedSize(true);
 
         orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(getApplicationContext(), orderList);
+        orderAdapter = new OrderAdapter(orderList,getApplicationContext());
         recyclerView.setAdapter(orderAdapter);
         orderAdapter.notifyDataSetChanged();
         // Initialize the locationManager here before using it.
+    }
+
+
+    private void fetchOrders() {
+        // Assuming the "users" collection contains a document with the current user's ID as the document ID
+        DocumentReference currentUserRef = firestore.collection("users").document(uid1);
+
+        currentUserRef.collection("Restaurants") // Assuming "Restaurants" is the subcollection containing restaurant documents
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    orderList.clear();
+                    for (QueryDocumentSnapshot restaurantSnapshot : queryDocumentSnapshots) {
+                        String restaurantId = restaurantSnapshot.getId(); // Get the restaurantId from the restaurant document
+
+                        CollectionReference ordersCollectionRef = restaurantSnapshot.getReference().collection("orders");
+                        ordersCollectionRef.whereEqualTo("orderTo", firebaseAuth.getUid())
+                                .get()
+                                .addOnSuccessListener(queryDocumentSnapshots1 -> {
+                                    if (!queryDocumentSnapshots1.isEmpty()) {
+                                        for (QueryDocumentSnapshot orderSnapshot : queryDocumentSnapshots1) {
+                                            Order order = orderSnapshot.toObject(Order.class);
+                                            orderList.add(order);
+                                        //    Toast.makeText(getApplicationContext(),""+order.getOrderTo(),Toast.LENGTH_SHORT).show();
+                                        }
+                                        orderAdapter.notifyDataSetChanged();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void requestLocationUpdates() {

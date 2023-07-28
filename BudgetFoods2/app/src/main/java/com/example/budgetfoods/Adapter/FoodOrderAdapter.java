@@ -44,7 +44,7 @@ public class FoodOrderAdapter extends RecyclerView.Adapter<FoodOrderAdapter.Food
 
         holder.textViewName.setText(foodModel.getFName());
         holder.textViewDescription.setText(foodModel.getFDescription());
-        holder.textViewPrice.setText(String.format("Price: $%s", foodModel.getFPrice()));
+        holder.textViewPrice.setText(String.format("Price: $%s", foodModel.getFTotal()));
         holder.textViewQuantity.setText(String.format("Quantity: %d", foodModel.getFQuantity()));
 
         String imagePath = foodModel.getFImage();

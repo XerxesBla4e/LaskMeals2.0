@@ -17,13 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.FoodOrderAdapter;
-import com.example.budgetfoods.Adapter.OrderAdapter;
 import com.example.budgetfoods.FCMSend;
 import com.example.budgetfoods.Models.FoodModel;
 import com.example.budgetfoods.Models.Order;
 import com.example.budgetfoods.Models.UserDets;
 import com.example.budgetfoods.R;
-import com.example.budgetfoods.databinding.ActivityStudentAdminBinding;
+import com.example.budgetfoods.databinding.ActivityStudentDetailsBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientDetails1 extends AppCompatActivity {
-    ActivityStudentAdminBinding activityClientDetailsBinding;
+    ActivityStudentDetailsBinding activityClientDetailsBinding;
     RecyclerView recyclerView;
     TextView studentname, location1, status1, totalprice;
     ImageView edit, delete;
@@ -63,7 +62,7 @@ public class ClientDetails1 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activityClientDetailsBinding = ActivityStudentAdminBinding.inflate(getLayoutInflater());
+        activityClientDetailsBinding = ActivityStudentDetailsBinding.inflate(getLayoutInflater());
         setContentView(activityClientDetailsBinding.getRoot());
         initViews(activityClientDetailsBinding);
 
@@ -73,8 +72,6 @@ public class ClientDetails1 extends AppCompatActivity {
         if (firebaseUser != null) {
             id = firebaseUser.getUid();
         }
-
-        RetrievePersonalDets();
 
         Intent intent = getIntent();
 
@@ -86,6 +83,9 @@ public class ClientDetails1 extends AppCompatActivity {
             status1.setText(ordersModel.getOrderStatus());
         }
 
+        retrievePersonalDets(OrderBy);
+
+        Toast.makeText(getApplicationContext(), "Order By"+OrderBy, Toast.LENGTH_SHORT).show();
         // Create a Firestore query to retrieve the food orders for the specific order and user
         CollectionReference medicineOrdersRef = FirebaseFirestore.getInstance().collection("users");
         // Modify the query to fetch orders from nested sub-collections
@@ -124,15 +124,13 @@ public class ClientDetails1 extends AppCompatActivity {
                                             for (DocumentSnapshot document : foodOrderSnapshot.getDocuments()) {
                                                 FoodModel foodOrder = document.toObject(FoodModel.class);
                                                 if (foodOrder != null) {
-                                                    String foodMPrice1 = foodOrder.getFPrice();
+                                                    String foodMPrice1 = String.valueOf(foodOrder.getFTotal());
                                                     //restaurant54 = foodOrder.getFRestaurant();
                                                     double mPrice = 0.0;
 
                                                     try {
-                                                        if (foodMPrice1 != null) {
-                                                            mPrice = Double.parseDouble(foodMPrice1);
-                                                            total += mPrice;
-                                                        }
+                                                        mPrice = Double.parseDouble(foodMPrice1);
+                                                        total += mPrice;
                                                     } catch (NumberFormatException e) {
                                                         // Handle the NumberFormatException, such as logging an error or displaying an error message
                                                         Log.e("ClientDetails1", "Error parsing food price: " + e.getMessage());
@@ -170,6 +168,13 @@ public class ClientDetails1 extends AppCompatActivity {
             }
         });
 
+        if(status1.getText().equals("Cancelled")){
+            status1.setTextColor(getBaseContext().getResources().getColor(R.color.red));
+        }else if(status1.getText().equals("In Progress")){
+            status1.setTextColor(getBaseContext().getResources().getColor(R.color.lightGreen));
+        } else if (status1.getText().equals("Confirmed")) {
+            status1.setTextColor(getBaseContext().getResources().getColor(R.color.teal_700));
+        }
 
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,14 +194,17 @@ public class ClientDetails1 extends AppCompatActivity {
                 if (xer == 0) {
                     String Message = "In Progress";
                     updateOrderStatus(Message);
+                    status1.setText(Message);
                     status1.setTextColor(getBaseContext().getResources().getColor(R.color.lightGreen));
                 } else if (xer == 1) {
                     String Message = "Confirmed";
                     updateOrderStatus(Message);
+                    status1.setText(Message);
                     status1.setTextColor(getBaseContext().getResources().getColor(R.color.teal_700));
                 } else if (xer == 2) {
                     String Message = "Cancelled";
                     updateOrderStatus(Message);
+                    status1.setText(Message);
                     status1.setTextColor(getBaseContext().getResources().getColor(R.color.red));
                 }
                 dialog.dismiss();
@@ -207,14 +215,14 @@ public class ClientDetails1 extends AppCompatActivity {
     }
 
 
-    private void initViews(ActivityStudentAdminBinding activityClientDetailsBinding) {
-        recyclerView = activityClientDetailsBinding.recyclerView65;
-        studentname = activityClientDetailsBinding.studentname;
-        location1 = activityClientDetailsBinding.studentlocation;
+    private void initViews(ActivityStudentDetailsBinding activityClientDetailsBinding) {
+        recyclerView = activityClientDetailsBinding.studrec;
+        studentname = activityClientDetailsBinding.patientname;
+        location1 = activityClientDetailsBinding.patientlocation;
         status1 = activityClientDetailsBinding.orderStatus;
         totalprice = activityClientDetailsBinding.totalprice;
         edit = activityClientDetailsBinding.editstatus;
-        delete = activityClientDetailsBinding.studentlocation1;
+        delete = activityClientDetailsBinding.editstatus;
         orderList = new ArrayList<>();
         OrdersAdapter = new FoodOrderAdapter(getApplicationContext(), orderList);
         recyclerView.setHasFixedSize(true);
@@ -254,7 +262,7 @@ public class ClientDetails1 extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void unused) {
                                             // Order status updated successfully for this restaurant
-                                            Toast.makeText(getApplicationContext(), "Order is now " + message + " for restaurant: " + restaurantDoc.getString("name"), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(), "Order is now " + message + " for restaurant: " + restaurantDoc.getString("restaurantname"), Toast.LENGTH_SHORT).show();
                                             prepareNotificationMessage(message);
                                         }
                                     })
@@ -287,39 +295,46 @@ public class ClientDetails1 extends AppCompatActivity {
         }
     }
 
-    private void RetrievePersonalDets() {
-        if (OrderBy != null) {
-            DocumentReference userRef = firestore.collection("users").document(OrderBy);
+    private void retrievePersonalDets(String orderBy) {
+        if (orderBy != null && !orderBy.isEmpty()) {
+            CollectionReference usersCollectionRef = firestore.collection("users");
 
-            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            usersCollectionRef.whereEqualTo("uid", orderBy).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            // User document exists, retrieve the data
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                            DocumentSnapshot document = querySnapshot.getDocuments().get(0);
                             UserDets user = document.toObject(UserDets.class);
 
-                            String location = user.getLocation();
-                            location1.setText(location);
-                            notstudenttoken = user.getToken();
-
+                            if (user != null) {
+                                String name = user.getName();
+                                studentname.setText(name);
+                                String location = user.getLocation();
+                                location1.setText(location);
+                                notstudenttoken = user.getToken();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Error: Unable to retrieve user data", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            // User document does not exist
-                            // Handle accordingly
-                            Toast.makeText(getApplicationContext(), "Client Doesn't Have Personal Info", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Student Doesn't Have Personal Info", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        // An error occurred
                         Exception exception = task.getException();
-                        // Handle the error
+                     //   Toast.makeText(getApplicationContext(), "Error: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Log the error for further investigation
+                        Log.e("FirestoreError", "Error retrieving personal data", exception);
                     }
                 }
             });
         } else {
-            //Toast.makeText(getApplicationContext(), "Order Doesn't Exist", Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(getApplicationContext(), "Error: Invalid OrderBy value", Toast.LENGTH_SHORT).show();
+            // Log an error message for debugging
+            Log.e("FirestoreError", "Invalid OrderBy value: " + OrderBy);
         }
     }
+
 
     @Override
     public void onBackPressed() {

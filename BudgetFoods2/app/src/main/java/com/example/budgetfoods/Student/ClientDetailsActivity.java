@@ -40,7 +40,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     TextView studentname, location1, status1, totalprice;
     ImageView edit, delete;
-
+    String notpatienttoken;
     Order ordersModel;
     List<FoodModel> orderList;
     FoodOrderAdapter OrdersAdapter;
@@ -95,14 +95,12 @@ public class ClientDetailsActivity extends AppCompatActivity {
                     if (!querySnapshot.isEmpty()) {
                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                             FoodModel foodOrder = document.toObject(FoodModel.class);
-                            String foodMPrice1 = foodOrder != null ? foodOrder.getFPrice() : null;
+                            int foodMPrice1 = foodOrder != null ? foodOrder.getFTotal() : null;
                             double mPrice = 0.0;
 
                             try {
-                                if (foodMPrice1 != null) {
-                                    mPrice = Double.parseDouble(foodMPrice1);
-                                    total += mPrice;
-                                }
+                                mPrice = foodMPrice1;
+                                total += mPrice;
                             } catch (NumberFormatException e) {
                                 // Handle the NumberFormatException, such as logging an error or displaying an error message
                                 Log.e("ClientDetails1", "Error parsing food price: " + e.getMessage());
@@ -143,12 +141,12 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
                             String location = user.getLocation();
                             location1.setText(location);
-                            //notstudenttoken = user.getToken();
+                            notpatienttoken = user.getToken();
 
                         } else {
                             // User document does not exist
                             // Handle accordingly
-                            //  Toast.makeText(getApplicationContext(), "Client Doesn't Have Personal Info", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Patient Doesn't Have Personal Info", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         // An error occurred
@@ -161,6 +159,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
             //Toast.makeText(getApplicationContext(), "Order Doesn't Exist", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void initViews(ActivityStudentDetailsBinding activityClientDetailsBinding) {
         recyclerView = activityClientDetailsBinding.studrec;

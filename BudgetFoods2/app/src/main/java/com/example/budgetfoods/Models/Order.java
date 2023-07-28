@@ -20,6 +20,9 @@ public class Order implements Parcelable {
         this.orderBy = orderBy;
     }
 
+    public Order() {
+    }
+
     protected Order(Parcel in) {
         orderID = in.readString();
         orderTime = in.readString();

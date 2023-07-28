@@ -101,12 +101,6 @@ public class CartActivity extends AppCompatActivity {
                     Log.d(TAG, "Items Present: " + foods.size());
                     Toast.makeText(getApplicationContext(), "Items Present: " + foods.size(), Toast.LENGTH_SHORT).show();
                 }
-                // Log details of each food item (for debugging purposes)
-             /*   for (Food food : foods) {
-                    Log.d(TAG, "Food Name: " + food.getFoodname() + ", Quantity: " + food.getQuantity());
-                }*/
-
-                // Update the adapter with the new data
                 adapter.submitList(foods);
             }
         });
@@ -261,97 +255,114 @@ public class CartActivity extends AppCompatActivity {
                                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                             String userId = document.getId();
 
+                                            // Create a new order for the admin
+                                            RetrieveAdminToken(userId);
+
                                             CollectionReference restaurantRef = firestore.collection("users")
                                                     .document(userId)
                                                     .collection("Restaurants");
 
-                                            // Check if the restaurant has the desired food item
-                                            restaurantRef.whereEqualTo("Food.fId", desiredFoodId)
-                                                    .get()
-                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                            if (task.isSuccessful()) {
-                                                                for (QueryDocumentSnapshot restaurantSnapshot : task.getResult()) {
-                                                                    String restaurantId = restaurantSnapshot.getId();
+                                            restaurantRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot restaurantSnapshot : task.getResult()) {
+                                                            // Get the restaurant ID
+                                                            String restaurantId = restaurantSnapshot.getId();
 
-                                                                    // Create a new order for the admin
-                                                                    RetrieveAdminToken(userId);
+                                                            // Check if the restaurant has the desired food item
+                                                            DocumentReference foodDocRef = restaurantRef.document(restaurantId)
+                                                                    .collection("Food")
+                                                                    .document(desiredFoodId);
 
-                                                                    // Create the order data
-                                                                    final String timestamp = "" + System.currentTimeMillis();
-                                                                    HashMap<String, Object> hashMap = new HashMap<>();
-                                                                    hashMap.put("orderID", "" + timestamp);
-                                                                    hashMap.put("orderTime", "" + timestamp);
-                                                                    hashMap.put("orderStatus", "In Progress");
-                                                                    hashMap.put("orderTo", "" + userId);
-                                                                    hashMap.put("orderBy", "" + firebaseAuth.getUid());
+                                                            foodDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> foodTask) {
+                                                                    if (foodTask.isSuccessful()) {
+                                                                        DocumentSnapshot foodSnapshot = foodTask.getResult();
+                                                                        if (foodSnapshot.exists()) {
 
-                                                                    // Create a new order for the restaurant (assuming "orders" is the collection name)
-                                                                    CollectionReference ordersRef = restaurantRef
-                                                                            .document(restaurantId)
-                                                                            .collection("orders");
-                                                                    ordersRef.document(timestamp).set(hashMap)
-                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                @Override
-                                                                                public void onSuccess(Void unused) {
+                                                                            // Create the order data
+                                                                            final String timestamp = "" + System.currentTimeMillis();
+                                                                            HashMap<String, Object> hashMap = new HashMap<>();
+                                                                            hashMap.put("orderID", "" + timestamp);
+                                                                            hashMap.put("orderTime", "" + timestamp);
+                                                                            hashMap.put("orderStatus", "In Progress");
+                                                                            hashMap.put("orderTo", "" + userId);
+                                                                            hashMap.put("orderBy", "" + firebaseAuth.getUid());
 
-                                                                                    CollectionReference foodOrdersRef = ordersRef.document(timestamp)
-                                                                                            .collection("foodOrders");
+                                                                            // Create a new order for the restaurant (assuming "orders" is the collection name)
+                                                                            CollectionReference ordersRef = restaurantRef
+                                                                                    .document(restaurantId)
+                                                                                    .collection("orders");
+                                                                            ordersRef.document(timestamp).set(hashMap)
+                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onSuccess(Void unused) {
 
-                                                                                    // Create a HashMap to store the details of the medicine
-                                                                                    HashMap<String, Object> foodDetails = new HashMap<>();
-                                                                                    foodDetails.put("fId", food.getFId());
-                                                                                    foodDetails.put("fName", food.getFoodname());
-                                                                                    foodDetails.put("fDescription", food.getDescription());
-                                                                                    foodDetails.put("fRestaurant", food.getRestaurant());
-                                                                                    foodDetails.put("fPrice", food.getPrice());
-                                                                                    foodDetails.put("fQuantity", food.getQuantity());
-                                                                                    foodDetails.put("fTotal", food.getTotal());
-                                                                                    foodDetails.put("fDiscount", food.getDiscount());
-                                                                                    foodDetails.put("fDiscountDesc", food.getDiscountdescription());
-                                                                                    foodDetails.put("fTimestamp", food.getTimestamp());
-                                                                                    foodDetails.put("fUid", food.getUid());
-                                                                                    foodDetails.put("fImage", food.getFoodimage());
+                                                                                            CollectionReference foodOrdersRef = ordersRef.document(timestamp)
+                                                                                                    .collection("foodOrders");
 
-                                                                                    foodOrdersRef.add(foodDetails)
-                                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                                                @Override
-                                                                                                public void onSuccess(DocumentReference documentReference) {
-                                                                                                    Toast.makeText(getApplicationContext(), "Food Order Placed Successfully", Toast.LENGTH_SHORT).show();
-                                                                                                    adapter.clearCart();
-                                                                                                    prepareNotificationMessage("New Food Order: ID" + timestamp);
-                                                                                                }
-                                                                                            })
-                                                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                                                @Override
-                                                                                                public void onFailure(@NonNull Exception e) {
-                                                                                                    // Error adding medicine order
-                                                                                                    Toast.makeText(getApplicationContext(), e.getMessage() + "", Toast.LENGTH_SHORT).show();
+                                                                                            // Create a HashMap to store the details of the medicine
+                                                                                            HashMap<String, Object> foodDetails = new HashMap<>();
+                                                                                            foodDetails.put("fId", food.getFId());
+                                                                                            foodDetails.put("fName", food.getFoodname());
+                                                                                            foodDetails.put("fDescription", food.getDescription());
+                                                                                            foodDetails.put("fRestaurant", food.getRestaurant());
+                                                                                            foodDetails.put("fPrice", food.getPrice());
+                                                                                            foodDetails.put("fQuantity", food.getQuantity());
+                                                                                            foodDetails.put("fTotal", food.getTotal());
+                                                                                            foodDetails.put("fDiscount", food.getDiscount());
+                                                                                            foodDetails.put("fDiscountDesc", food.getDiscountdescription());
+                                                                                            foodDetails.put("fTimestamp", food.getTimestamp());
+                                                                                            foodDetails.put("fUid", food.getUid());
+                                                                                            foodDetails.put("fImage", food.getFoodimage());
 
-                                                                                                }
-                                                                                            });
+                                                                                            foodOrdersRef.add(foodDetails)
+                                                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                                        @Override
+                                                                                                        public void onSuccess(DocumentReference documentReference) {
+                                                                                                            Toast.makeText(getApplicationContext(), "Food Order Placed Successfully", Toast.LENGTH_SHORT).show();
+                                                                                                            adapter.clearCart();
+                                                                                                            prepareNotificationMessage("New Food Order: ID" + timestamp);
+                                                                                                        }
+                                                                                                    })
+                                                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                                                        @Override
+                                                                                                        public void onFailure(@NonNull Exception e) {
+                                                                                                            // Error adding medicine order
+                                                                                                            Toast.makeText(getApplicationContext(), e.getMessage() + "", Toast.LENGTH_SHORT).show();
+
+                                                                                                        }
+                                                                                                    });
 
 
-                                                                                }
-                                                                            })
-                                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                                @Override
-                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                        }
+                                                                                    })
+                                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                                        @Override
+                                                                                        public void onFailure(@NonNull Exception e) {
 
-                                                                                }
-                                                                            });
+                                                                                        }
+                                                                                    });
 
+                                                                        } else {
+                                                                            // The restaurant does not have the desired food item
+                                                                            // Handle the case when the desired food is not found in this restaurant
+                                                                        }
+                                                                    } else {
+                                                                        // Handle exceptions that may occur while fetching the food document
+                                                                    }
                                                                 }
-                                                            } else {
-                                                                // Handle the error
-                                                                Exception exception = task.getException();
-                                                                if (exception != null) {
-                                                                    Log.d(TAG, exception + "");
-                                                                }
-                                                            }
+                                                            });
                                                         }
-                                                    });
+                                                    } else {
+                                                        // Handle exceptions that may occur while fetching the restaurants collection
+                                                    }
+                                                }
+                                            });
+
+
                                         }
                                     }
                                 } else {

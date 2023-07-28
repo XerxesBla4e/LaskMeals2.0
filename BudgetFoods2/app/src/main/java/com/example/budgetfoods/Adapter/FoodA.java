@@ -116,6 +116,9 @@ public class FoodA extends ListAdapter<Food, FoodA.FoodViewHolder> {
             // Set the quantity and handle its click listeners
             quantity = food.getQuantity();
             quantityTextView.setText(String.valueOf(quantity));
+            priceTextView.setText(String.format("Price: Shs %s", food.getTotal()));
+
+
 
         }
 
