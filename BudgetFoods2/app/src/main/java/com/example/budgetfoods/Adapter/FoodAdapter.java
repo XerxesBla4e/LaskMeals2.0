@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -21,6 +22,7 @@ import com.example.budgetfoods.Interface.OnAddToCartListener;
 import com.example.budgetfoods.Interface.OnQuantityChangeListener;
 import com.example.budgetfoods.Models.Food;
 import com.example.budgetfoods.R;
+import com.example.budgetfoods.ViewModel.FoodViewModel;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 import com.squareup.picasso.Picasso;
@@ -34,9 +36,11 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
     private ImageButton addQty, reduceQty;
     private RatingBar ratingBar;
     private Button addToCartBtn;
+    private FoodViewModel foodViewModel; // The ViewModel instance
 
-    public FoodAdapter() {
+    public FoodAdapter(FoodViewModel viewModel) {
         super(CALLBACK);
+        this.foodViewModel = viewModel;
     }
 
     public void setOnAddToCartClickListener(OnAddToCartListener listener) {
@@ -93,13 +97,18 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             description = dialogView.findViewById(R.id.descriptionTextView);
             description.setText(food.getDescription());
             quantitytextview = dialogView.findViewById(R.id.textViewQuantity);
+            quantitytextview.setText(String.valueOf(food.getQuantity()));
             addToCartBtn = dialogView.findViewById(R.id.button2);
             price2 = dialogView.findViewById(R.id.amountTextView);
+            price2.setText(food.getPrice());
             newprice2 = dialogView.findViewById(R.id.discountAmountTextView);
             totalamount = dialogView.findViewById(R.id.totalAmountTextView);
+            totalamount.setText(String.valueOf(food.getTotal()));
             ratingBar = dialogView.findViewById(R.id.ratingBar2);
 
             ratingBar.setRating(4.5f);
+
+            computePriceDiscount(food, price2, newprice2);
 
             addQty.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -132,12 +141,11 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             addToCartBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (onAddToCartClickListener != null) {
-                        onAddToCartClickListener.onAddToCartClick(food, holder.getAdapterPosition());
-                    }
+                    foodViewModel.insert(food);
+                    Toast.makeText(view.getContext(), "ADDED TO CART", Toast.LENGTH_SHORT).show();
+                    //onAddToCartClickListener.onAddToCartClick(food, holder.getAdapterPosition());
                 }
             });
-            computePriceDiscount(food, price2, newprice2);
 
             String imagePath = food.getFoodimage();
             try {
@@ -183,7 +191,7 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
         submitList(foodList);
     }
 
-    public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class FoodViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private TextView nameTextView;
         private TextView priceTextView;
@@ -195,7 +203,7 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             imageView = itemView.findViewById(R.id.movie_img);
             nameTextView = itemView.findViewById(R.id.textView33);
             priceTextView = itemView.findViewById(R.id.textView34);
-            newprice= itemView.findViewById(R.id.new_price); // Initialize the new price TextView
+            newprice = itemView.findViewById(R.id.new_price); // Initialize the new price TextView
             imageButton = itemView.findViewById(R.id.imageButton6);
         }
 
@@ -235,16 +243,5 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             }
         }
 
-
-        @Override
-        public void onClick(View view) {
-            if (onAddToCartClickListener != null) {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    Food food = getItem(position);
-                    onAddToCartClickListener.onAddToCartClick(food, position);
-                }
-            }
-        }
     }
 }

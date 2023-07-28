@@ -44,7 +44,7 @@ public class RestaurantFoods extends AppCompatActivity {
     Restaurant restaurant;
     FirebaseAuth firebaseAuth;
     FirebaseFirestore firestore;
-    private FoodViewModel foodViewModel;
+    FoodViewModel foodViewModel;
     FoodAdapter foodAdapter;
     ArrayList<Restaurant> restaurants;
     TextView rateusTV;
@@ -52,6 +52,8 @@ public class RestaurantFoods extends AppCompatActivity {
     ImageView imageView;
     float rating;
     RatingBar ratingBar;
+    String resname, restype;
+    TextView resnametv, restypetv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,10 @@ public class RestaurantFoods extends AppCompatActivity {
             image = restaurant.getImage();
             adminID = restaurant.getUid();
             rating = restaurant.getRatings();
+            resname = restaurant.getRestaurantname();
+            resnametv.setText(resname);
+            restype = restaurant.getDescription();
+            restypetv.setText(restype);
             if (rating > 0.0) {
                 ratingBar.setRating(rating);
             } else {
@@ -90,13 +96,6 @@ public class RestaurantFoods extends AppCompatActivity {
         });
         foodViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory
                 .getInstance((Application) this.getApplicationContext())).get(FoodViewModel.class);
-
-        foodAdapter.setOnAddToCartClickListener(new OnAddToCartListener() {
-            @Override
-            public void onAddToCartClick(Food food, int position) {
-                AddToCart(food);
-            }
-        });
     }
 
     private void showRatingDialog(Restaurant restaurant) {
@@ -182,8 +181,8 @@ public class RestaurantFoods extends AppCompatActivity {
                             foodItemList.add(foodItem);
                         }
                         // Update the adapter with the retrieved food items using the new constructor
-                        foodAdapter = new FoodAdapter();
-                        foodAdapter.submitList(foodItemList); // Set the retrieved food items to the adapter
+                        foodAdapter = new FoodAdapter(foodViewModel);
+                        foodAdapter.updateFoodList(foodItemList); // Set the retrieved food items to the adapter
                         recyclerView.setAdapter(foodAdapter);
                     } else {
                         // Handle errors here
@@ -195,19 +194,15 @@ public class RestaurantFoods extends AppCompatActivity {
     @SuppressLint("NotifyDataSetChanged")
     private void initViews(ActivityRestaurantFoodsBinding activityViewRestaurantsBinding) {
         imageView = activityViewRestaurantsBinding.backgroundImage;
-        foodAdapter = new FoodAdapter(); // Initialize the adapter with an empty list initially
+        foodAdapter = new FoodAdapter(foodViewModel); // Initialize the adapter with an empty list initially
         restaurants = new ArrayList<>();
         recyclerView = activityViewRestaurantsBinding.resrecview;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         foodAdapter.notifyDataSetChanged();
         ratingBar = activityViewRestaurantsBinding.ratingBar22;
         rateusTV = activityViewRestaurantsBinding.rateUsText;
+        resnametv = activityViewRestaurantsBinding.restaurantNameText;
+        restypetv = activityViewRestaurantsBinding.foodTypeText;
     }
 
-    private void AddToCart(Food food) {
-        Food food1 = new Food(food.getFoodname(), food.getDescription(), food.getRestaurant(),
-                food.getPrice(), food.getFId(), food.getTimestamp(), food.getUid(), food.getDiscount(), food.getDescription(),
-                food.getFoodimage());
-        foodViewModel.insert(food1);
-    }
 }

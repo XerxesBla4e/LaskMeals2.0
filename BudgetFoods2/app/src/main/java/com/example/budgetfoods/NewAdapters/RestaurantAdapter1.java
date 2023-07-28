@@ -47,8 +47,8 @@ public class RestaurantAdapter1 extends RecyclerView.Adapter<RestaurantAdapter1.
     public void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position) {
         Restaurant restaurant = restaurantList.get(position);
 
-        holder.nameTextView.setText(restaurant.getName());
-        holder.foodDescriptionTextView.setText(restaurant.getDescriptionuniversity());
+        holder.nameTextView.setText(restaurant.getRestaurantname());
+        holder.foodDescriptionTextView.setText(restaurant.getDescription());
 
         // Check if the rating is greater than zero before setting it in the RatingBar
         if (restaurant.getRatings() > 0) {

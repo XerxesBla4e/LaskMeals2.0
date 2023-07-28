@@ -54,7 +54,6 @@ public class CartActivity extends AppCompatActivity {
 
     ActivityCartBinding activityCartBinding;
     FoodA adapter;
-    List<Food> foodList;
     RecyclerView recyclerView;
     Button button;
     FoodViewModel foodViewModel;
@@ -81,18 +80,37 @@ public class CartActivity extends AppCompatActivity {
 
         initViews(activityCartBinding);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+
+        // Initialize foodViewModel before observing the LiveData
+        foodViewModel = new ViewModelProvider(this).get(FoodViewModel.class);
+        adapter = new FoodA();
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        // Initialize foodViewModel before observing the LiveData
-        foodViewModel = new ViewModelProvider(this).get(FoodViewModel.class);
         foodViewModel.getAllFoods().observe(this, new Observer<List<Food>>() {
             @Override
             public void onChanged(List<Food> foods) {
+                if (foods.isEmpty()) {
+                    Log.d(TAG, "No Items in the Food list");
+                    Toast.makeText(getApplicationContext(), "No Items Food", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d(TAG, "Items Present: " + foods.size());
+                    Toast.makeText(getApplicationContext(), "Items Present: " + foods.size(), Toast.LENGTH_SHORT).show();
+                }
+                // Log details of each food item (for debugging purposes)
+             /*   for (Food food : foods) {
+                    Log.d(TAG, "Food Name: " + food.getFoodname() + ", Quantity: " + food.getQuantity());
+                }*/
+
+                // Update the adapter with the new data
                 adapter.submitList(foods);
             }
         });
+
         adapter.setOnQuantityChangeListener(new OnQuantityChangeListener() {
             @Override
             public void onAddButtonClick(Food food, int position) {
@@ -160,9 +178,7 @@ public class CartActivity extends AppCompatActivity {
     private void initViews(ActivityCartBinding activityCartBinding) {
         textView = activityCartBinding.textView8;
         button = activityCartBinding.button6;
-        foodList = new ArrayList<>();
         recyclerView = activityCartBinding.recyclerview11;
-        adapter = new FoodA();
     }
 
     public double computeTotalPrice() {
@@ -178,6 +194,8 @@ public class CartActivity extends AppCompatActivity {
                 // Parse the price as a double
                 double mPrice3 = Double.parseDouble(priceWithoutCurrency);
                 totalPrice1 += mPrice3;
+                textView.setText(String.format("TOTAL COST:UGX %s", totalPrice1));
+                textView.requestLayout();
             }
         }
         return totalPrice1;
@@ -196,10 +214,10 @@ public class CartActivity extends AppCompatActivity {
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             if (radioPayOnDelivery.isChecked()) {
                 // Handle "Pay on Delivery" option
-                processPayment(totalp, sphone);
+                processCarOrder();
             } else if (radioPayOnline.isChecked()) {
                 // Handle "Pay Online" option
-                processCarOrder();
+                processPayment(totalp, sphone);
             } else {
                 // Handle the case where no option is selected
                 Toast.makeText(getApplicationContext(), "Please select a payment option", Toast.LENGTH_SHORT).show();
@@ -346,7 +364,7 @@ public class CartActivity extends AppCompatActivity {
                             }
                         });
             }
-            textView.setText(String.format("TOTAL COST:UG X %s", totalPrice));
+            textView.setText(String.format("TOTAL COST:UGX %s", totalPrice));
             textView.requestLayout();
         }
     }

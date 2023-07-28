@@ -19,12 +19,6 @@ import com.squareup.picasso.Picasso;
 
 public class FoodA extends ListAdapter<Food, FoodA.FoodViewHolder> {
     int quantity;
-    //private CartItemViewModel cartItemViewModel;
-
-    /*  public FoodA(CartItemViewModel cartItemViewModel) {
-          super(CALLBACK);
-          this.cartItemViewModel = cartItemViewModel;
-      }*/
     private OnQuantityChangeListener quantityChangeListener;
 
     public FoodA() {

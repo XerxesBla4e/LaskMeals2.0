@@ -43,7 +43,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     public void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position) {
         Restaurant restaurant = restaurantList.get(position);
 
-        holder.nameTextView.setText(restaurant.getName());
+        holder.nameTextView.setText(restaurant.getRestaurantname());
         holder.restaurantIdTextView.setText(restaurant.getRId());
 
         if (restaurant.getImage() != null && !restaurant.getImage().isEmpty()) {

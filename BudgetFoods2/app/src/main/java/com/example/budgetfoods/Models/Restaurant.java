@@ -11,41 +11,42 @@ import java.util.Date;
 
 public class Restaurant implements Parcelable{
     private String restaurantname;
-    private String name;
-    private String descriptionuniversity;
+    private String description;
+    private String university;
     private String RId;
     private float ratings;
     private int totalratings;
+    private String timestamp;
     private String Uid;
     private String image;
-    private String timestamp;
+
 
     // Empty constructor required for Firestore
     public Restaurant() {
     }
 
-    public Restaurant(String restaurantname, String name, String descriptionuniversity, String RId, float ratings, int totalratings, String uid, String image, String timestamp) {
+    public Restaurant(String restaurantname, String description, String university, String RId, float ratings, int totalratings, String timestamp, String uid, String image) {
         this.restaurantname = restaurantname;
-        this.name = name;
-        this.descriptionuniversity = descriptionuniversity;
+        this.description = description;
+        this.university = university;
         this.RId = RId;
         this.ratings = ratings;
         this.totalratings = totalratings;
+        this.timestamp = timestamp;
         this.Uid = uid;
         this.image = image;
-        this.timestamp = timestamp;
     }
 
     protected Restaurant(Parcel in) {
         restaurantname = in.readString();
-        name = in.readString();
-        descriptionuniversity = in.readString();
+        description = in.readString();
+        university = in.readString();
         RId = in.readString();
         ratings = in.readFloat();
         totalratings = in.readInt();
+        timestamp = in.readString();
         Uid = in.readString();
         image = in.readString();
-        timestamp = in.readString();
     }
 
     public static final Creator<Restaurant> CREATOR = new Creator<Restaurant>() {
@@ -68,20 +69,20 @@ public class Restaurant implements Parcelable{
         this.restaurantname = restaurantname;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getDescriptionuniversity() {
-        return descriptionuniversity;
+    public String getUniversity() {
+        return university;
     }
 
-    public void setDescriptionuniversity(String descriptionuniversity) {
-        this.descriptionuniversity = descriptionuniversity;
+    public void setUniversity(String university) {
+        this.university = university;
     }
 
     public String getRId() {
@@ -108,6 +109,14 @@ public class Restaurant implements Parcelable{
         this.totalratings = totalratings;
     }
 
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public String getUid() {
         return Uid;
     }
@@ -124,14 +133,6 @@ public class Restaurant implements Parcelable{
         this.image = image;
     }
 
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -140,13 +141,13 @@ public class Restaurant implements Parcelable{
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
         parcel.writeString(restaurantname);
-        parcel.writeString(name);
-        parcel.writeString(descriptionuniversity);
+        parcel.writeString(description);
+        parcel.writeString(university);
         parcel.writeString(RId);
         parcel.writeFloat(ratings);
         parcel.writeInt(totalratings);
+        parcel.writeString(timestamp);
         parcel.writeString(Uid);
         parcel.writeString(image);
-        parcel.writeString(timestamp);
     }
 }
