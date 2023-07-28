@@ -31,9 +31,6 @@
             android:name=".Admin.ClientDetails1"
             android:exported="false" />
         <activity
-            android:name=".Admin.AddRestaurant"
-            android:exported="false" />
-        <activity
             android:name=".Admin.AdminMain"
             android:exported="false" />
         <activity
@@ -93,6 +90,9 @@
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".Student.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Admin.AddFood"
             android:exported="false" />
 
         <service

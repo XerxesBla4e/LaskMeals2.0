@@ -48,7 +48,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     ActivityHomeBinding activityHomeBinding;
-    // private FoodViewModel foodViewModel;
+
     RecyclerView recyclerView;
     RestaurantAdapter1 restaurantAdapter1;
     FirebaseAuth firebaseAuth;
@@ -68,7 +68,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(activityHomeBinding.getRoot());
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                updateUserLocation(location.getLatitude(), location.getLongitude());
+            }
 
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+        };
         initViews(activityHomeBinding);
         firestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -98,16 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-      /*  foodViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory
-                .getInstance((Application) this.getApplicationContext())).get(FoodViewModel.class);
-        adapter.setOnAddToCartClickListener(new OnAddToCartListener() {
-            @Override
-            public void onAddToCartClick(Food food, int position) {
-                AddToCart(food);
-            }
-        });*/
-
-
     }
 
     private void requestLocationUpdates() {
@@ -130,16 +138,6 @@ public class MainActivity extends AppCompatActivity {
             public void onProviderDisabled(String provider) {
             }
         };
-
-      /*  popularFoodadapter.setOnAddToCartClickListener(new OnAddToCartListener() {
-            @Override
-            public void onAddToCartClick(Food food, int position) {
-                Food food2 = new Food(food.getFoodname(), food.getDescription(), food.getRestaurant(),
-                        food.getPrice(), food.getFId(), food.getTimestamp(), food.getUid(), food.getDiscount(), food.getDescription(),
-                        food.getFoodimage());
-                foodViewModel.insert(food2);
-            }
-        });*/
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);

@@ -24,9 +24,11 @@ import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.OrderAdapter;
 import com.example.budgetfoods.Authentication.LoginActivity;
+import com.example.budgetfoods.Authentication.UpdateProfile;
 import com.example.budgetfoods.Interface.OnMoveToDetsListener;
 import com.example.budgetfoods.Models.Order;
 import com.example.budgetfoods.R;
+import com.example.budgetfoods.Student.MainActivity;
 import com.example.budgetfoods.databinding.ActivityAdminMainBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -63,8 +65,9 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
     String uid1;
     RecyclerView recyclerView;
     private LocationManager locationManager;
-    private LocationListener locationListener;
+
     private static final String TAG = "Location";
+    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,25 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         activityAdminMainBinding = ActivityAdminMainBinding.inflate(getLayoutInflater());
         setContentView(activityAdminMainBinding.getRoot());
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                updateUserLocation(location.getLatitude(), location.getLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+        };
         initViews(activityAdminMainBinding);
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
@@ -86,8 +108,8 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     uid1 = user.getUid();
-                    retrieveOrders();
                     requestLocationUpdates();
+                    retrieveOrders();
                 } else {
                     startActivity(new Intent(AdminMain.this, LoginActivity.class));
                     finish();
@@ -100,7 +122,7 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent x0 = new Intent(getApplicationContext(), ViewRestaurants.class);
+                Intent x0 = new Intent(getApplicationContext(), AddRestaurant.class);
                 x0.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(x0);
             }
@@ -283,7 +305,7 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
         orderAdapter = new OrderAdapter(getApplicationContext(), orderList);
         recyclerView.setAdapter(orderAdapter);
         orderAdapter.notifyDataSetChanged();
-
+        // Initialize the locationManager here before using it.
     }
 
     private void requestLocationUpdates() {
@@ -350,7 +372,7 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
                     x.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(x);
                 } else if (item.getItemId() == R.id.nav_food) {
-                    Intent x6 = new Intent(getApplicationContext(), AddRestaurant.class);
+                    Intent x6 = new Intent(getApplicationContext(), ViewRestaurants.class);
                     x6.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(x6);
                 } else if (item.getItemId() == R.id.nav_logout) {
@@ -358,8 +380,10 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
                     firebaseAuth.signOut();
                     startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                     finish();
-                } else if (item.getItemId() == R.id.nav_viewfood) {
-
+                } else if (item.getItemId() == R.id.nav_prof) {
+                    Intent x6 = new Intent(getApplicationContext(), UpdateProfile.class);
+                    x6.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(x6);
                 }
             }
         });
@@ -400,6 +424,9 @@ public class AdminMain extends AppCompatActivity implements OnMoveToDetsListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        locationManager.removeUpdates(locationListener);
+        if (locationListener != null) {
+            locationManager.removeUpdates(locationListener);
+        }
     }
+
 }

@@ -35,6 +35,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -102,6 +103,8 @@ public class UpdateProfile extends AppCompatActivity {
         setContentView(activityUpdateProfileBinding.getRoot());
 
         initViews(activityUpdateProfileBinding);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
