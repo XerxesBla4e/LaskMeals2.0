@@ -20,7 +20,9 @@
         tools:targetApi="31">
         <activity
             android:name=".Student.RestaurantFoods"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat"
+            />
         <activity
             android:name=".Admin.ViewRestaurants"
             android:exported="false" />

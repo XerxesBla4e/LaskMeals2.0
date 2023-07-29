@@ -381,34 +381,39 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void RetrieveAdminToken(String userId) {
-        DocumentReference userRef = firestore.collection("users").document(userId);
+        if (userId != null && !userId.isEmpty()) {
+            CollectionReference usersCollectionRef = firestore.collection("users");
 
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        // User document exists, retrieve the data
-                        UserDets user = document.toObject(UserDets.class);
+            usersCollectionRef.whereEqualTo("uid", userId).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                            DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                            UserDets user = document.toObject(UserDets.class);
 
-                        if (user.getToken() != null) {
-                            notadmintoken = user.getToken();
+                            if (user != null) {
+                                notadmintoken = user.getToken();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Error: Unable to retrieve user data", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "You Don't Have Personal Info", Toast.LENGTH_SHORT).show();
                         }
-
                     } else {
-                        // User document does not exist
-                        // Handle accordingly
-                        Toast.makeText(getApplicationContext(), "Admin Doesn't Have Personal Info", Toast.LENGTH_SHORT).show();
+                        Exception exception = task.getException();
+                        //   Toast.makeText(getApplicationContext(), "Error: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Log the error for further investigation
+                        Log.e("FirestoreError", "Error retrieving personal data", exception);
                     }
-                } else {
-                    // An error occurred
-                    Exception exception = task.getException();
-                    exception.printStackTrace();
-                    // Handle the error
                 }
-            }
-        });
+            });
+        } else {
+            //   Toast.makeText(getApplicationContext(), "Error: Invalid OrderBy value", Toast.LENGTH_SHORT).show();
+            // Log an error message for debugging
+            Log.e("FirestoreError", "Invalid Uid value: " + userId);
+        }
     }
 
     private void prepareNotificationMessage(String message) {

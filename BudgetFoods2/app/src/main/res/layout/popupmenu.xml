@@ -1,8 +1,7 @@
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/popcorners"
     app:cardElevation="4dp">
 
@@ -77,10 +76,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:text="- ush2000"
-                        android:visibility="gone"
                         android:textColor="#8A000000"
                         android:textSize="14sp"
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -106,8 +105,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginStart="150dp">
+                android:layout_marginStart="150dp"
+                android:gravity="center_vertical">
 
                 <!-- ImageButton to Reduce Quantity -->
                 <ImageButton
@@ -141,13 +140,13 @@
         <!-- Description -->
         <TextView
             android:id="@+id/descriptionTextView"
-            android:layout_marginTop="9dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Delicious food item with a perfect blend of flavors. Served with a side of fresh salad."
-            android:textSize="16sp"
+            android:layout_marginTop="9dp"
             android:lineSpacingExtra="8dp"
-            android:textColor="#666666" />
+            android:text="Delicious food item with a perfect blend of flavors. Served with a side of fresh salad."
+            android:textColor="#666666"
+            android:textSize="16sp" />
 
         <!-- Total Amount with Discount Price -->
         <LinearLayout
@@ -183,10 +182,16 @@
                 android:layout_marginStart="20dp"
                 android:text="Discount: - ush2000"
                 android:textColor="#8A000000"
-                android:visibility="gone"
                 android:textSize="14sp"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:visibility="gone" />
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/choicesfd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
 
         <!-- Add to Cart Button -->
         <Button

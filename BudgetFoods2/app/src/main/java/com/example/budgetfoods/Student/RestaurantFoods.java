@@ -99,8 +99,8 @@ public class RestaurantFoods extends AppCompatActivity {
     }
 
     private void showRatingDialog(Restaurant restaurant) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getApplicationContext());
-        View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_rate_restaurant, null);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RestaurantFoods.this);
+        View dialogView = LayoutInflater.from(RestaurantFoods.this).inflate(R.layout.dialog_rate_restaurant, null);
         dialogBuilder.setView(dialogView);
 
         RatingBar ratingBarRestaurant = dialogView.findViewById(R.id.ratingBarRestaurant);
@@ -118,8 +118,8 @@ public class RestaurantFoods extends AppCompatActivity {
         });
 
         alertDialog.show();
-
     }
+
 
     private void updateRestaurantRating(Restaurant restaurant, float newRating) {
         float currentRating = restaurant.getRatings();

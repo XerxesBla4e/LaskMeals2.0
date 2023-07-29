@@ -197,6 +197,7 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
         private TextView priceTextView;
         private TextView newprice; // New TextView for displaying discounted price
         private ImageButton imageButton;
+        RatingBar ratingBar;
 
         public FoodViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -205,11 +206,14 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             priceTextView = itemView.findViewById(R.id.textView34);
             newprice = itemView.findViewById(R.id.new_price); // Initialize the new price TextView
             imageButton = itemView.findViewById(R.id.imageButton6);
+            ratingBar = itemView.findViewById(R.id.rating_bar22);
         }
 
         public void bind(Food food) {
             nameTextView.setText(food.getFoodname());
             priceTextView.setText(String.format("Price: Shs %s", food.getPrice()));
+
+            ratingBar.setRating(4.5f);
 
             if (food.getDiscount() != null && !food.getDiscount().isEmpty() && food.getDiscountdescription() != null && !food.getDiscountdescription().isEmpty()) {
                 int discount = Integer.parseInt(food.getDiscount());

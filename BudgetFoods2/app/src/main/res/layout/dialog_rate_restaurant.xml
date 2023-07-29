@@ -1,4 +1,5 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center">
@@ -7,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="24dp"
         android:background="@drawable/dialog_background">
 
         <RatingBar
@@ -17,7 +18,10 @@
             android:numStars="5"
             android:contentDescription="Rate Restaurant"
             android:rating="0.0"
-            android:stepSize="1" />
+            android:stepSize="1"
+            android:isIndicator="false"
+            android:progressTint="#FFD700"
+            android:layout_gravity="center_horizontal" />
 
         <Button
             android:id="@+id/btnSubmitRating"

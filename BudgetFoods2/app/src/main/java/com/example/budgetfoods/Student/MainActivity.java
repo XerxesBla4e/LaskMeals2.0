@@ -2,6 +2,7 @@ package com.example.budgetfoods.Student;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private LocationListener locationListener;
     BottomNavigationView bottomNavigationView;
     FirebaseUser firebaseUser;
+    SearchView searchView;
     String uid1;
 
     @Override
@@ -116,6 +118,41 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String searchQuery = query.trim();
+                filterRestaurants(searchQuery);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                String searchQuery = newText.trim();
+                filterRestaurants(searchQuery);
+                return true;
+            }
+        });
+    }
+
+    private void filterRestaurants(String searchQuery) {
+        List<Restaurant> filteredList = new ArrayList<>();
+
+        // Check if search query is empty
+        if (searchQuery.isEmpty()) {
+            filteredList.addAll(restaurantList);
+        } else {
+            // Apply search query filter
+            for (Restaurant restaurant : restaurantList) {
+                if (restaurant.getRestaurantname().toLowerCase().contains(searchQuery.toLowerCase())) {
+                    filteredList.add(restaurant);
+                }
+            }
+        }
+        // Update RecyclerView adapter with filtered list
+        restaurantAdapter1.updateRestaurantList(filteredList);
+        restaurantAdapter1.notifyDataSetChanged();
     }
 
     private void requestLocationUpdates() {
@@ -188,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         restaurantAdapter1.notifyDataSetChanged();
 
         bottomNavigationView = activityHomeBinding.bottomNavgation;
+        searchView = activityHomeBinding.searchView;
     }
 
     private void initBottomNavView() {

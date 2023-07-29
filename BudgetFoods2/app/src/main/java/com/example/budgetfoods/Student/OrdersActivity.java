@@ -16,6 +16,7 @@ import com.example.budgetfoods.R;
 import com.example.budgetfoods.databinding.FragmentCartBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -44,19 +45,19 @@ public class OrdersActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(orderList,getApplicationContext());
+        orderAdapter = new OrderAdapter(orderList, getApplicationContext());
         recyclerView.setAdapter(orderAdapter);
 
         fetchOrders();
 
-    /*    orderAdapter.setOnMoveToDetsListener(new OnMoveToDetsListener() {
+        orderAdapter.setOnMoveToDetsListener(new OnMoveToDetsListener() {
             @Override
             public void onMoveToDets(Order order) {
                 Intent intent = new Intent(getApplicationContext(), ClientDetailsActivity.class);
                 intent.putExtra("ordersModel", order);
                 startActivity(intent);
             }
-        });*/
+        });
     }
 
     private void initViews() {
@@ -66,24 +67,36 @@ public class OrdersActivity extends AppCompatActivity {
     }
 
     private void fetchOrders() {
-        CollectionReference usersCollectionRef = firestore.collection("Users");
+        CollectionReference usersCollectionRef = firestore.collection("users");
 
-        usersCollectionRef.whereEqualTo("accountType", "Admin")
+        usersCollectionRef.whereEqualTo("accounttype", "Admin")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                   // orderList.clear();
-                    for (QueryDocumentSnapshot userSnapshot : queryDocumentSnapshots) {
-                        CollectionReference ordersCollectionRef = userSnapshot.getReference()
-                                .collection("Orders");
-                        ordersCollectionRef.whereEqualTo("orderTo", firebaseAuth.getUid())
-                                .get()
+                    orderList.clear();
+                    for (QueryDocumentSnapshot adminSnapshot : queryDocumentSnapshots) {
+                        //    String adminId = adminSnapshot.getId();
+
+                        CollectionReference restaurantsCollectionRef = adminSnapshot.getReference().collection("Restaurants");
+                        restaurantsCollectionRef.get()
                                 .addOnSuccessListener(queryDocumentSnapshots1 -> {
-                                    if (!queryDocumentSnapshots1.isEmpty()) {
-                                        for (QueryDocumentSnapshot orderSnapshot : queryDocumentSnapshots1) {
-                                            Order order = orderSnapshot.toObject(Order.class);
-                                            orderList.add(order);
-                                        }
-                                        orderAdapter.notifyDataSetChanged();
+                                    for (QueryDocumentSnapshot restaurantSnapshot : queryDocumentSnapshots1) {
+                                        String restaurantId = restaurantSnapshot.getId();
+
+                                        CollectionReference ordersCollectionRef = restaurantSnapshot.getReference().collection("orders");
+                                        ordersCollectionRef.whereEqualTo("orderBy", firebaseAuth.getUid())
+                                                .get()
+                                                .addOnSuccessListener(queryDocumentSnapshots2 -> {
+                                                    if (!queryDocumentSnapshots2.isEmpty()) {
+                                                        for (QueryDocumentSnapshot orderSnapshot : queryDocumentSnapshots2) {
+                                                            Order order = orderSnapshot.toObject(Order.class);
+                                                            orderList.add(order);
+                                                        }
+                                                        orderAdapter.notifyDataSetChanged();
+                                                    }
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                });
                                     }
                                 })
                                 .addOnFailureListener(e -> {
@@ -95,4 +108,5 @@ public class OrdersActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
 }
