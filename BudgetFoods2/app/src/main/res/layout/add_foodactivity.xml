@@ -51,7 +51,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Food">
+        android:hint="Food (rice,matooke,..)">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/fnameEditText"
@@ -63,7 +63,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Source">
+        android:hint="Source (gnutstew,beef,beans..)">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/nameEditDescription"

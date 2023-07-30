@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.budgetfoods.DAO.FoodDAO;
-import com.example.budgetfoods.Models.Food;
+import com.example.budgetfoods.models.Food;
 
 
 @Database(entities = Food.class, version = 1)

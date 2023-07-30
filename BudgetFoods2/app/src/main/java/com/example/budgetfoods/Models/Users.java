@@ -1,4 +1,4 @@
-package com.example.budgetfoods.Models;
+package com.example.budgetfoods.models;
 
 public class Users {
     String accounttype;

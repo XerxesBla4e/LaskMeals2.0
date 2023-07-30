@@ -20,9 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.FoodAdapter;
-import com.example.budgetfoods.Interface.OnAddToCartListener;
-import com.example.budgetfoods.Models.Food;
-import com.example.budgetfoods.Models.Restaurant;
+import com.example.budgetfoods.models.Food;
+import com.example.budgetfoods.models.Restaurant;
 import com.example.budgetfoods.R;
 import com.example.budgetfoods.ViewModel.FoodViewModel;
 import com.example.budgetfoods.databinding.ActivityRestaurantFoodsBinding;
@@ -64,6 +63,9 @@ public class RestaurantFoods extends AppCompatActivity {
 
         initViews(activityViewRestaurantsBinding);
 
+        foodViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory
+                .getInstance((Application) this.getApplicationContext())).get(FoodViewModel.class);
+
         firebaseAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
@@ -94,8 +96,7 @@ public class RestaurantFoods extends AppCompatActivity {
                 showRatingDialog(restaurant);
             }
         });
-        foodViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory
-                .getInstance((Application) this.getApplicationContext())).get(FoodViewModel.class);
+
     }
 
     private void showRatingDialog(Restaurant restaurant) {
@@ -205,4 +206,8 @@ public class RestaurantFoods extends AppCompatActivity {
         restypetv = activityViewRestaurantsBinding.foodTypeText;
     }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
 }

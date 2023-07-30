@@ -18,9 +18,9 @@ import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.FoodOrderAdapter;
 import com.example.budgetfoods.FCMSend;
-import com.example.budgetfoods.Models.FoodModel;
-import com.example.budgetfoods.Models.Order;
-import com.example.budgetfoods.Models.UserDets;
+import com.example.budgetfoods.models.FoodModel;
+import com.example.budgetfoods.models.Order;
+import com.example.budgetfoods.models.UserDets;
 import com.example.budgetfoods.R;
 import com.example.budgetfoods.databinding.ActivityStudentDetailsBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -299,7 +299,7 @@ public class ClientDetails1 extends AppCompatActivity {
         if (orderBy != null && !orderBy.isEmpty()) {
             CollectionReference usersCollectionRef = firestore.collection("users");
 
-            usersCollectionRef.whereEqualTo("uid", orderBy).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            usersCollectionRef.whereEqualTo("uid", orderBy).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
@@ -344,4 +344,5 @@ public class ClientDetails1 extends AppCompatActivity {
         // Finish the current activity
         finish();
     }
+
 }

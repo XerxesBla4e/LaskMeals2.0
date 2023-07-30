@@ -9,17 +9,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.FoodOrderAdapter;
-import com.example.budgetfoods.Admin.AdminMain;
-import com.example.budgetfoods.Models.FoodModel;
-import com.example.budgetfoods.Models.Order;
-import com.example.budgetfoods.Models.UserDets;
-import com.example.budgetfoods.R;
+import com.example.budgetfoods.models.FoodModel;
+import com.example.budgetfoods.models.Order;
+import com.example.budgetfoods.models.UserDets;
 import com.example.budgetfoods.databinding.ActivityStudentDetailsBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -178,7 +175,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), AdminMain.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         // super.onBackPressed();
         // Finish the current activity

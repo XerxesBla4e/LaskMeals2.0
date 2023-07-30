@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,7 +24,7 @@ import androidx.core.content.ContextCompat;
 import com.example.budgetfoods.Admin.AdminMain;
 import com.example.budgetfoods.Authentication.AfterSplash;
 import com.example.budgetfoods.Authentication.LoginActivity;
-import com.example.budgetfoods.Models.Users;
+import com.example.budgetfoods.models.Users;
 import com.example.budgetfoods.Student.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

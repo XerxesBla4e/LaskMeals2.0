@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -38,6 +38,7 @@
                     android:id="@+id/foodNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_bold"
                     android:text="Delicious Food Name"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -64,6 +65,7 @@
                         android:id="@+id/amountTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_semibold"
                         android:text="ush12000"
                         android:textColor="#FF5722"
                         android:textSize="18sp"
@@ -93,15 +95,17 @@
             android:orientation="horizontal">
 
             <!-- Quantity TextView -->
+
+            <!-- LinearLayout with ImageButtons for reducing and increasing quantity -->
             <TextView
                 android:id="@+id/quantityTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_semibold"
                 android:text="Quantity: "
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- LinearLayout with ImageButtons for reducing and increasing quantity -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,6 +117,7 @@
                     android:id="@+id/imageButtonRemove"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
+                    android:backgroundTint="@color/white"
                     android:contentDescription="Reduce"
                     app:srcCompat="@drawable/ic_remove_24" />
 
@@ -132,6 +137,7 @@
                     android:id="@+id/imageButtonAdd"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
+                    android:backgroundTint="@color/white"
                     android:contentDescription="Increase"
                     app:srcCompat="@drawable/ic_baseline_add_24" />
             </LinearLayout>
@@ -143,6 +149,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="9dp"
+            android:fontFamily="@font/montserrat"
             android:lineSpacingExtra="8dp"
             android:text="Delicious food item with a perfect blend of flavors. Served with a side of fresh salad."
             android:textColor="#666666"
@@ -187,11 +194,35 @@
                 android:visibility="gone" />
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="9dp"
+            android:text="Food"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
         <LinearLayout
-            android:id="@+id/choicesfd"
+            android:id="@+id/containerCheckBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="7dp"
+            android:text="Source"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/containerCheckBox2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
         <!-- Add to Cart Button -->
         <Button

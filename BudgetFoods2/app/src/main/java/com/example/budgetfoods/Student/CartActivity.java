@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +24,8 @@ import com.example.budgetfoods.Adapter.FoodA;
 import com.example.budgetfoods.Constants;
 import com.example.budgetfoods.FCMSend;
 import com.example.budgetfoods.Interface.OnQuantityChangeListener;
-import com.example.budgetfoods.Models.Food;
-import com.example.budgetfoods.Models.UserDets;
+import com.example.budgetfoods.models.Food;
+import com.example.budgetfoods.models.UserDets;
 import com.example.budgetfoods.R;
 import com.example.budgetfoods.ViewModel.FoodViewModel;
 import com.example.budgetfoods.databinding.ActivityCartBinding;
@@ -45,7 +44,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -182,7 +180,7 @@ public class CartActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Cart is empty", Toast.LENGTH_SHORT).show();
         } else {
             for (Food food : foodcarts) {
-                String foodPrice = food.getPrice();
+                String foodPrice = String.valueOf(food.getTotal());
                 // Remove any non-numeric characters from the string
                 String priceWithoutCurrency = foodPrice.replaceAll("[^\\d.]", "");
                 // Parse the price as a double
@@ -255,9 +253,6 @@ public class CartActivity extends AppCompatActivity {
                                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                             String userId = document.getId();
 
-                                            // Create a new order for the admin
-                                            RetrieveAdminToken(userId);
-
                                             CollectionReference restaurantRef = firestore.collection("users")
                                                     .document(userId)
                                                     .collection("Restaurants");
@@ -281,6 +276,8 @@ public class CartActivity extends AppCompatActivity {
                                                                     if (foodTask.isSuccessful()) {
                                                                         DocumentSnapshot foodSnapshot = foodTask.getResult();
                                                                         if (foodSnapshot.exists()) {
+
+                                                                            RetrieveAdminToken(userId);
 
                                                                             // Create the order data
                                                                             final String timestamp = "" + System.currentTimeMillis();
@@ -325,6 +322,7 @@ public class CartActivity extends AppCompatActivity {
                                                                                                             Toast.makeText(getApplicationContext(), "Food Order Placed Successfully", Toast.LENGTH_SHORT).show();
                                                                                                             adapter.clearCart();
                                                                                                             prepareNotificationMessage("New Food Order: ID" + timestamp);
+                                                                                                            deleteCartItems();
                                                                                                         }
                                                                                                     })
                                                                                                     .addOnFailureListener(new OnFailureListener() {
@@ -384,7 +382,7 @@ public class CartActivity extends AppCompatActivity {
         if (userId != null && !userId.isEmpty()) {
             CollectionReference usersCollectionRef = firestore.collection("users");
 
-            usersCollectionRef.whereEqualTo("uid", userId).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            usersCollectionRef.whereEqualTo("uid", userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
@@ -476,4 +474,16 @@ public class CartActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
+
+    private void deleteCartItems() {
+        List<Food> foods = adapter.getCurrentList();
+        if (!foods.isEmpty()) {
+            foodViewModel.deleteAllFoods(foods);
+        }
+    }
+
 }

@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 
 import com.example.budgetfoods.DAO.FoodDAO;
 import com.example.budgetfoods.Database.FoodDatabase;
-import com.example.budgetfoods.Models.Food;
+import com.example.budgetfoods.models.Food;
 
 import java.util.List;
 

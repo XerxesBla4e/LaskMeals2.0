@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.ViewFoodAdapter;
-import com.example.budgetfoods.Models.Food;
-import com.example.budgetfoods.Models.Order;
-import com.example.budgetfoods.R;
+import com.example.budgetfoods.Student.MainActivity;
+import com.example.budgetfoods.models.Food;
 import com.example.budgetfoods.databinding.ActivityViewMyFoodsBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -161,5 +161,9 @@ public class ViewMyFoods extends AppCompatActivity {
                     }
                 });
 
+    }
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), AdminMain.class));
     }
 }

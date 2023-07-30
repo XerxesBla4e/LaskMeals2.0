@@ -1,37 +1,39 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/dialog_background"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:background="@drawable/dialog_background">
+        android:padding="24dp">
 
         <RatingBar
             android:id="@+id/ratingBarRestaurant"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:numStars="5"
+            android:layout_gravity="center_horizontal"
             android:contentDescription="Rate Restaurant"
-            android:rating="0.0"
-            android:stepSize="1"
             android:isIndicator="false"
+            android:numStars="5"
             android:progressTint="#FFD700"
-            android:layout_gravity="center_horizontal" />
+            android:rating="0.0"
+            android:stepSize="1" />
 
         <Button
             android:id="@+id/btnSubmitRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Submit"
-            android:textColor="@color/white"
-            android:background="@drawable/button_background"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:background="@drawable/button_background"
+            android:backgroundTint="#f7931e"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="Submit"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 

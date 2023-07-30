@@ -11,14 +11,14 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="421dp"
-        android:layout_height="731dp"
+        android:layout_width="342dp"
+        android:layout_height="233dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintVertical_bias="0.261"
         app:srcCompat="@drawable/logo_budget_foods_01" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

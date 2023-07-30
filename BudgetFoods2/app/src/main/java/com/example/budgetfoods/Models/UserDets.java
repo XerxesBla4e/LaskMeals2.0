@@ -1,4 +1,4 @@
-package com.example.budgetfoods.Models;
+package com.example.budgetfoods.models;
 
 public class UserDets {
     private String uid;

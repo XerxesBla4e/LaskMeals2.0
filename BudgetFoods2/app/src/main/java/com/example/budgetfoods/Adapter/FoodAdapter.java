@@ -1,14 +1,16 @@
 package com.example.budgetfoods.Adapter;
 
-import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,14 +21,15 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetfoods.Interface.OnAddToCartListener;
-import com.example.budgetfoods.Interface.OnQuantityChangeListener;
-import com.example.budgetfoods.Models.Food;
+import com.example.budgetfoods.models.Food;
 import com.example.budgetfoods.R;
 import com.example.budgetfoods.ViewModel.FoodViewModel;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,6 +39,12 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
     private ImageButton addQty, reduceQty;
     private RatingBar ratingBar;
     private Button addToCartBtn;
+    private LinearLayout containerFoodItems;
+    private LinearLayout containerSourceItems;
+    private List<String> selectedFoodItems = new ArrayList<>();
+    private List<String> selectedSourceItems = new ArrayList<>();
+    private String selectedFoodItemsString;
+    private String selectedSourceItemsString;
     private FoodViewModel foodViewModel; // The ViewModel instance
 
     public FoodAdapter(FoodViewModel viewModel) {
@@ -108,6 +117,16 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
 
             ratingBar.setRating(4.5f);
 
+            //LinearLayouts for checkbox choices
+            containerFoodItems = dialogView.findViewById(R.id.containerCheckBox);
+            containerSourceItems = dialogView.findViewById(R.id.containerCheckBox2);
+
+            String[] foodItemsArray = food.getFoodname().split(",");
+            String[] sourceItemsArray = food.getDescription().split(",");
+
+            createCheckBoxes(containerFoodItems, foodItemsArray, selectedFoodItems);
+            createCheckBoxes(containerSourceItems, sourceItemsArray, selectedSourceItems);
+
             computePriceDiscount(food, price2, newprice2);
 
             addQty.setOnClickListener(new View.OnClickListener() {
@@ -141,9 +160,13 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             addToCartBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    selectedFoodItemsString = convertToCommaSeparatedString(selectedFoodItems);
+                    selectedSourceItemsString = convertToCommaSeparatedString(selectedSourceItems);
+
+                    food.setDescription(selectedFoodItemsString);
+                    food.setFoodname(selectedSourceItemsString);
                     foodViewModel.insert(food);
                     Toast.makeText(view.getContext(), "ADDED TO CART", Toast.LENGTH_SHORT).show();
-                    //onAddToCartClickListener.onAddToCartClick(food, holder.getAdapterPosition());
                 }
             });
 
@@ -163,6 +186,50 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
 
             dialogPlus.show();
         });
+    }
+
+    private void createCheckBoxes(LinearLayout container, String[] itemsArray, List<String> selectedItems) {
+        List<String> itemsList = new ArrayList<>(Arrays.asList(itemsArray));
+
+        // Create checkboxes programmatically
+        for (String item : itemsList) {
+            createCheckBox(container, item, selectedItems);
+        }
+    }
+
+    private void createCheckBox(LinearLayout container, String itemName, List<String> selectedItems) {
+        CheckBox checkBox = new CheckBox(container.getContext());
+        checkBox.setText(itemName);
+
+        // Generate a unique ID for the CheckBox
+        checkBox.setId(View.generateViewId());
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // If CheckBox is checked, add the item to the selectedItems list
+                    selectedItems.add(itemName);
+                } else {
+                    // If CheckBox is unchecked, remove the item from the selectedItems list
+                    selectedItems.remove(itemName);
+                }
+            }
+        });
+
+        container.addView(checkBox);
+    }
+
+
+    private String convertToCommaSeparatedString(List<String> itemList) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < itemList.size(); i++) {
+            builder.append(itemList.get(i));
+            if (i < itemList.size() - 1) {
+                builder.append(",");
+            }
+        }
+        return builder.toString();
     }
 
     private void computePriceDiscount(Food food, TextView price2, TextView newprice2) {
@@ -197,7 +264,6 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
         private TextView priceTextView;
         private TextView newprice; // New TextView for displaying discounted price
         private ImageButton imageButton;
-        RatingBar ratingBar;
 
         public FoodViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -206,14 +272,11 @@ public class FoodAdapter extends ListAdapter<Food, FoodAdapter.FoodViewHolder> {
             priceTextView = itemView.findViewById(R.id.textView34);
             newprice = itemView.findViewById(R.id.new_price); // Initialize the new price TextView
             imageButton = itemView.findViewById(R.id.imageButton6);
-            ratingBar = itemView.findViewById(R.id.rating_bar22);
         }
 
         public void bind(Food food) {
             nameTextView.setText(food.getFoodname());
             priceTextView.setText(String.format("Price: Shs %s", food.getPrice()));
-
-            ratingBar.setRating(4.5f);
 
             if (food.getDiscount() != null && !food.getDiscount().isEmpty() && food.getDiscountdescription() != null && !food.getDiscountdescription().isEmpty()) {
                 int discount = Integer.parseInt(food.getDiscount());

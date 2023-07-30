@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey"
     tools:context=".Student.RestaurantFoods">
 
     <!-- ImageView to display the background image -->
@@ -11,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:scaleType="centerCrop"
+        android:scrollbarThumbHorizontal="@color/grey"
+        android:scrollbarThumbVertical="@color/grey"
         android:src="@drawable/kfc" />
 
     <!-- Layout to be displayed on top of the background image -->
@@ -35,6 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/montserrat_bold"
                 android:text="Restaurant Name"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
@@ -44,6 +48,7 @@
                 android:id="@+id/food_type_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat"
                 android:text="Food Type"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
@@ -58,21 +63,25 @@
             android:layout_below="@id/infolin"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
+            android:background="@color/grey"
             android:orientation="horizontal">
 
             <RatingBar
                 android:id="@+id/rating_bar22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:numStars="5"
                 android:contentDescription="Rating"
-                android:stepSize="0.5" />
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:isIndicator="true"
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/number_of_ratings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:fontFamily="@font/montserrat"
                 android:text="0 Ratings"
                 android:textColor="@color/black"
                 android:textSize="16sp"
@@ -92,10 +101,10 @@
             android:id="@+id/rate_us_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/rateus"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
-            android:contentDescription="Rate Us Icon" />
+            android:contentDescription="Rate Us Icon"
+            android:src="@drawable/rateus" />
 
         <!-- TextView for "Rate Us" text -->
         <TextView
@@ -104,6 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/rate_us_icon"
             android:layout_centerHorizontal="true"
+            android:fontFamily="@font/montserrat_semibold"
             android:text="Rate Us"
             android:textColor="@color/black"
             android:textSize="18sp"

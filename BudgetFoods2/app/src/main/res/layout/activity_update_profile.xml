@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#176D9C">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        tools:context=".Authentication.UpdateProfile"
-        android:layout_height="match_parent"
+    <LinearLayout
         android:id="@+id/updateproflinlayout"
-        android:background="#148cc1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#176D9C"
+        android:orientation="vertical"
 
-        android:orientation="vertical">
+        tools:context=".Authentication.UpdateProfile">
 
         <TextView
             android:id="@+id/textView"
@@ -215,7 +215,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/custom_button"
-            android:text="Signup"
+            android:text="Update"
             android:textColor="#FFFFFF"
             app:backgroundTint="#F7931E" />
 

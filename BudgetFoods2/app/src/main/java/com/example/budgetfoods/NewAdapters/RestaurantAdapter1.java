@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetfoods.Interface.OnMoveToResDetsListener;
-import com.example.budgetfoods.Models.Restaurant;
+import com.example.budgetfoods.models.Restaurant;
 import com.example.budgetfoods.R;
 import com.squareup.picasso.Picasso;
 

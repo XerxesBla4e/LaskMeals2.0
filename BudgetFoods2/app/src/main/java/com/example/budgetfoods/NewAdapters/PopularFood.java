@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetfoods.Interface.OnAddToCartListener;
-import com.example.budgetfoods.Models.Food;
+import com.example.budgetfoods.models.Food;
 import com.example.budgetfoods.R;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;

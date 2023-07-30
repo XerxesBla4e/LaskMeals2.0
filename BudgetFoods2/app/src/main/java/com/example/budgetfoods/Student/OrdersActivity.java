@@ -6,17 +6,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.budgetfoods.Adapter.OrderAdapter;
 import com.example.budgetfoods.Interface.OnMoveToDetsListener;
-import com.example.budgetfoods.Models.Order;
-import com.example.budgetfoods.R;
+import com.example.budgetfoods.models.Order;
 import com.example.budgetfoods.databinding.FragmentCartBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -109,4 +106,8 @@ public class OrdersActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
 }

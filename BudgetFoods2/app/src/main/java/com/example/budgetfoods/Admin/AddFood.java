@@ -10,22 +10,18 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 
-import com.example.budgetfoods.Models.Restaurant;
+import com.example.budgetfoods.models.Restaurant;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import android.widget.Toast;
 
 import com.example.budgetfoods.Authentication.LoginActivity;
-import com.example.budgetfoods.R;
 import com.example.budgetfoods.databinding.AddFoodactivityBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -316,7 +312,7 @@ public class AddFood extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), AdminMain.class);
+        Intent intent = new Intent(getApplicationContext(), ViewRestaurants.class);
         startActivity(intent);
         finish();
     }

@@ -18,49 +18,45 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white">
+            android:background="@drawable/back_g_01">
 
             <!-- Header Section -->
-            <TextView
-                android:id="@+id/textView28"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Hi User"
-                android:textColor="#F7931E"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textView29"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Order and Eat"
-                android:textColor="#F7931E"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView28" />
 
             <!-- Search View -->
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="92dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+
+                android:layout_marginEnd="55dp"
+                app:layout_constraintEnd_toStartOf="@+id/searchView"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/logo_budget_foods_01" />
+
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
+                android:layout_width="255dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/search_view_background"
+                android:gravity="right"
                 android:queryHint="Search for items"
-                app:layout_constraintBottom_toTopOf="@+id/linlayout"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.589"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView29" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textView35"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Get yourself delicious chicken and fries"
+                    android:textSize="14sp" />
+            </androidx.appcompat.widget.SearchView>
 
             <LinearLayout
                 android:id="@+id/linlayout"
@@ -68,15 +64,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="vertical"
+                android:scrollbarThumbHorizontal="@color/white"
+                android:scrollbarThumbVertical="@color/white"
                 app:layout_constraintTop_toBottomOf="@id/searchView">
 
                 <!-- Add CardView to wrap the ConstraintLayout -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="275dp"
                     android:layout_margin="8dp"
                     android:background="#FFFFFF"
                     android:elevation="7dp"
+                    app:cardBackgroundColor="#F4F7FC"
                     app:cardCornerRadius="8dp">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -84,23 +83,46 @@
                         android:layout_height="wrap_content">
 
                         <!-- ImageView -->
+
+                        <TextView
+                            android:id="@+id/textView10"
+                            android:layout_width="170dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="8dp"
+                            android:fontFamily="@font/montserrat"
+                            android:text="Get yourself very tasty food"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@+id/button4"
+                            app:layout_constraintStart_toEndOf="@+id/imageView14"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.247" />
+
                         <ImageView
                             android:id="@+id/imageView14"
-                            android:layout_width="226dp"
+                            android:layout_width="180dp"
                             android:layout_height="358dp"
-                            android:scaleType="centerCrop"
+
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:srcCompat="@drawable/food2" />
 
                         <!-- TextView (Title) -->
+
+                        <!-- TextView (Description) -->
+
+                        <!-- TextView (Price) -->
+
+                        <!-- Button -->
+
                         <TextView
                             android:id="@+id/textView32"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="16dp"
+                            android:layout_width="184dp"
+                            android:layout_height="32dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="60dp"
+                            android:fontFamily="@font/montserrat_bold"
                             android:text="Chicken Veggies"
                             android:textColor="#03A9F4"
                             android:textSize="20sp"
@@ -108,79 +130,74 @@
                             app:layout_constraintStart_toEndOf="@+id/imageView14"
                             app:layout_constraintTop_toTopOf="@id/imageView14" />
 
-                        <!-- TextView (Description) -->
-                        <TextView
-                            android:id="@+id/textView35"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="16dp"
-                            android:text="Get yourself delicious chicken and fries"
-                            android:textSize="14sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/imageView14"
-                            app:layout_constraintTop_toBottomOf="@id/textView32" />
-
-                        <!-- TextView (Price) -->
                         <TextView
                             android:id="@+id/textView36"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/montserrat_semibold"
                             android:text="ush25000"
                             android:textSize="16sp"
                             android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/imageView14"
-                            app:layout_constraintTop_toBottomOf="@id/textView35" />
+                            app:layout_constraintHorizontal_bias="0.729"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.694" />
 
-                        <!-- Button -->
                         <Button
                             android:id="@+id/button4"
                             android:layout_width="134dp"
                             android:layout_height="56dp"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginStart="208dp"
+                            android:layout_marginTop="200dp"
                             android:fontFamily="@font/montserrat_bold"
                             android:text="ADD TO CART"
                             android:textColor="@android:color/white"
                             app:backgroundTint="#f7931e"
-                            app:layout_constraintStart_toEndOf="@+id/imageView14"
-                            app:layout_constraintTop_toBottomOf="@id/textView36" />
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/textView32" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp">
+
+                    <TextView
+                        android:id="@+id/textView58"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:text="Featured Restaurants"
+                        android:textColor="#2196F3"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.042"
+                        tools:layout_editor_absoluteX="16dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewpopv"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:layout_marginTop="10dp"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:layout_constraintTop_toBottomOf="@+id/textView58"
+                        app:spanCount="2"
+                        tools:listitem="@layout/activity_home_details" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </LinearLayout>
 
             <!-- Latest Item Section -->
-            <TextView
-                android:id="@+id/textView58"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Featured Restaurants"
-                android:textColor="#2196F3"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/linlayout" />
 
             <!-- Latest Item RecyclerView (as Grid) -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewpopv"
-                android:layout_width="411dp"
-                android:layout_height="728dp"
-                android:layout_marginTop="16dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView58"
-                app:spanCount="2"
-                tools:listitem="@layout/activity_home_details" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -192,8 +209,8 @@
         android:layout_width="410dp"
         android:layout_height="66dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/orangewhite"
-        app:itemBackground="@color/orangewhite"
+        android:background="@color/white"
+        app:itemBackground="@color/grey"
         app:itemIconTint="@drawable/nav_item_colour_selected"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"

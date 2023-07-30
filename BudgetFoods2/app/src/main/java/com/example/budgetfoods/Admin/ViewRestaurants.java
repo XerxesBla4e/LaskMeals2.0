@@ -14,10 +14,8 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.budgetfoods.Interface.OnMoveToResDetsListener;
-import com.example.budgetfoods.Models.Food;
-import com.example.budgetfoods.Models.Restaurant;
+import com.example.budgetfoods.models.Restaurant;
 import com.example.budgetfoods.NewAdapters.RestaurantAdapter;
-import com.example.budgetfoods.R;
 import com.example.budgetfoods.databinding.ActivityViewRestaurantsBinding;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,7 +27,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -202,5 +199,9 @@ public class ViewRestaurants extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(restaurantAdapter);
         restaurantAdapter.notifyDataSetChanged();
+    }
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), AdminMain.class));
     }
 }

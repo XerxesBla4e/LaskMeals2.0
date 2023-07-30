@@ -1,13 +1,9 @@
-package com.example.budgetfoods.Models;
+package com.example.budgetfoods.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-
-import com.google.firebase.firestore.ServerTimestamp;
-
-import java.util.Date;
 
 public class Restaurant implements Parcelable{
     private String restaurantname;

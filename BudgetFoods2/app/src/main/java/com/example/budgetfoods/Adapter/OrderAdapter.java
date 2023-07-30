@@ -7,11 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetfoods.Interface.OnMoveToDetsListener;
-import com.example.budgetfoods.Models.Order;
+import com.example.budgetfoods.models.Order;
 import com.example.budgetfoods.R;
 
 import java.util.List;

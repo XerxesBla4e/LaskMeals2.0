@@ -9,10 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.budgetfoods.Models.FoodModel;
+import com.example.budgetfoods.models.FoodModel;
 import com.example.budgetfoods.R;
 import com.squareup.picasso.Picasso;
 

@@ -5,9 +5,8 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-
-import com.example.budgetfoods.Models.Food;
 import com.example.budgetfoods.Repository.FoodRepo;
+import com.example.budgetfoods.models.Food;
 
 import java.util.List;
 
@@ -35,5 +34,11 @@ public class FoodViewModel extends AndroidViewModel {
 
     public LiveData<List<Food>> getAllFoods() {
         return foodList;
+    }
+
+    public void deleteAllFoods(List<Food> foods) {
+        for (Food food : foods) {
+            foodRepo.deleteData(food);
+        }
     }
 }

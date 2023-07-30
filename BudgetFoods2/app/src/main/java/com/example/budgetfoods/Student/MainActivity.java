@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.example.budgetfoods.Authentication.LoginActivity;
 import com.example.budgetfoods.Authentication.UpdateProfile;
 import com.example.budgetfoods.Interface.OnMoveToResDetsListener;
-import com.example.budgetfoods.Models.Restaurant;
+import com.example.budgetfoods.models.Restaurant;
 import com.example.budgetfoods.NewAdapters.RestaurantAdapter1;
 import com.example.budgetfoods.R;
 import com.example.budgetfoods.databinding.ActivityHomeBinding;

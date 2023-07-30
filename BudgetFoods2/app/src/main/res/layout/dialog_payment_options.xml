@@ -6,12 +6,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#176D9C"
+        android:gravity="center"
         android:padding="16dp"
         android:text="Select Payment Option"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"
-        android:gravity="center" />
+        android:textColor="@android:color/white" />
 
     <RadioGroup
         android:id="@+id/radioGroup"

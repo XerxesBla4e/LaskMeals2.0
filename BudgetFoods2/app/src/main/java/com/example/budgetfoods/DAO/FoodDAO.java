@@ -7,7 +7,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.budgetfoods.Models.Food;
+import com.example.budgetfoods.models.Food;
 
 import java.util.List;
 
