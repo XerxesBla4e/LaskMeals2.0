@@ -30,16 +30,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.budgetfoods.Admin.AdminMain;
 import com.example.budgetfoods.R;
+import com.example.budgetfoods.SplashScreen;
+import com.example.budgetfoods.Student.MainActivity;
 import com.example.budgetfoods.databinding.ActivityUpdateProfileBinding;
+import com.example.budgetfoods.models.Users;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -75,6 +82,7 @@ public class UpdateProfile extends AppCompatActivity {
     LocationCallback locationCallback;
     LocationManager locationManager;
     LocationListener locationListener;
+    private DocumentReference userRef;
     private static int UPDATE_INTERVAL = 5000;
     String userId;
     FirebaseUser firebaseUser;
@@ -401,5 +409,48 @@ public class UpdateProfile extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         displayLocation();
+    }
+
+    @Override
+    public void onBackPressed() {
+        checkUserType();
+    }
+
+    private void checkUserType() {
+        user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            userRef = firestore.collection("users").document(uid1);
+
+            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot snapshot = task.getResult();
+                        if (snapshot != null && snapshot.exists()) {
+                            Users userProfile = snapshot.toObject(Users.class);
+                            if (userProfile != null) {
+                                String accountType = userProfile.getAccounttype();
+
+                                if (accountType.equals("Student")) {
+                                    startActivity(new Intent(UpdateProfile.this, MainActivity.class));
+                                } else {
+                                    startActivity(new Intent(getApplicationContext(), AdminMain.class));
+
+                                }
+                            }
+                        } else {
+                            // User collection or document doesn't exist
+                           // startActivity(new Intent(UpdateProfile.this, AfterSplash.class));
+                        }
+                    } else {
+                        Toast.makeText(UpdateProfile.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        // Go back to LoginActivity
+                       // startActivity(new Intent(UpdateProfile.this, AfterSplash.class));
+                    }
+                }
+            });
+        } else {
+            //   startActivity(new Intent(SplashScreen.this, AfterSplash.class));
+        }
     }
 }

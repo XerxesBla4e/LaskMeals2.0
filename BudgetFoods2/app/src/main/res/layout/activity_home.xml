@@ -26,10 +26,9 @@
 
             <ImageView
                 android:id="@+id/imageView6"
-                android:layout_width="92dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="8dp"
-
+                android:layout_width="65dp"
+                android:layout_height="54dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginEnd="55dp"
                 app:layout_constraintEnd_toStartOf="@+id/searchView"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -39,15 +38,14 @@
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
-                android:layout_width="255dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="16dp"
+                android:layout_width="310dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/search_view_background"
                 android:gravity="right"
                 android:queryHint="Search for items"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.589"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView6"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -100,8 +98,8 @@
 
                         <ImageView
                             android:id="@+id/imageView14"
-                            android:layout_width="180dp"
-                            android:layout_height="358dp"
+                            android:layout_width="176dp"
+                            android:layout_height="297dp"
 
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -120,8 +118,8 @@
                             android:id="@+id/textView32"
                             android:layout_width="184dp"
                             android:layout_height="32dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="60dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="24dp"
                             android:fontFamily="@font/montserrat_bold"
                             android:text="Chicken Veggies"
                             android:textColor="#03A9F4"
