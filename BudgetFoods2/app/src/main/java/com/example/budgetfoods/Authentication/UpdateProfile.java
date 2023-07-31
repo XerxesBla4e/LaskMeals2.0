@@ -398,12 +398,6 @@ public class UpdateProfile extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
         displayLocation();
