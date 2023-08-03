@@ -191,7 +191,7 @@ public class SplashScreen extends AppCompatActivity {
                         }
                     } else {
                         Toast.makeText(SplashScreen.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        // Go back to LoginActivity
+                        // Go back to com.example.budgetfoods.Admin.LoginActivity
                         startActivity(new Intent(SplashScreen.this, AfterSplash.class));
                     }
                 }

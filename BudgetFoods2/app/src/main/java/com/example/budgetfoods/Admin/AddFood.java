@@ -21,7 +21,6 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 import android.widget.Toast;
 
-import com.example.budgetfoods.Authentication.LoginActivity;
 import com.example.budgetfoods.databinding.AddFoodactivityBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -78,8 +77,6 @@ public class AddFood extends AppCompatActivity {
         if (firebaseUser != null) {
             uid = firebaseUser.getUid();
         } else {
-            startActivity(new Intent(AddFood.this, LoginActivity.class));
-            finish();
         }
 
         initViews();

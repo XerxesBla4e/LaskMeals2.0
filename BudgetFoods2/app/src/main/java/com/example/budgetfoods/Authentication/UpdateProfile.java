@@ -444,7 +444,7 @@ public class UpdateProfile extends AppCompatActivity {
                         }
                     } else {
                         Toast.makeText(UpdateProfile.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        // Go back to LoginActivity
+                        // Go back to com.example.budgetfoods.Admin.LoginActivity
                        // startActivity(new Intent(UpdateProfile.this, AfterSplash.class));
                     }
                 }

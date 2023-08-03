@@ -1,23 +1,22 @@
 package com.example.budgetfoods.Authentication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.budgetfoods.Admin.AdminMain;
-import com.example.budgetfoods.models.Users;
 import com.example.budgetfoods.Student.MainActivity;
 import com.example.budgetfoods.databinding.ActivityLoginBinding;
+import com.example.budgetfoods.models.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -83,17 +82,9 @@ public class LoginActivity extends AppCompatActivity {
                     // Handle validation errors
                     return;
                 }
-                //start of progress bar code
-                progressBar.setIndeterminate(true);
+
+                // Start the progress bar
                 progressBar.setVisibility(View.VISIBLE);
-
-                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                if (progressBar.getParent() != null) {
-                    ((ViewGroup) progressBar.getParent()).removeView(progressBar);
-                }
-
-                linearLayout.addView(progressBar, layoutParams);
-                //end of progress bar code
 
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -106,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                progressBar.setVisibility(View.GONE);
                                 Toast.makeText(getApplicationContext(), "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -160,10 +152,13 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
+    // ... Other code ...
 
     private void checkUserType(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -172,6 +167,7 @@ public class LoginActivity extends AppCompatActivity {
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                progressBar.setVisibility(View.GONE);
                 if (task.isSuccessful()) {
                     DocumentSnapshot snapshot = task.getResult();
                     if (snapshot != null && snapshot.exists()) {
@@ -179,12 +175,16 @@ public class LoginActivity extends AppCompatActivity {
                         if (userProfile != null) {
                             String accountType = userProfile.getAccounttype();
 
+                            Intent mainIntent;
                             if (accountType.equals("Student")) {
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                mainIntent = new Intent(getApplicationContext(), MainActivity.class);
                             } else {
-                                 startActivity(new Intent(getApplicationContext(), AdminMain.class));
+                                mainIntent = new Intent(getApplicationContext(), AdminMain.class);
                             }
-                            finish();
+
+                            mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(mainIntent);
+                            finish(); // Finish the LoginActivity here to remove it from the back stack
                         }
                     }
                 } else {
@@ -193,4 +193,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
 }
